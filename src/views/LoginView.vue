@@ -210,10 +210,10 @@ export default {
     })
     const handleLogin = async () => {
       isLoading.value = true // Mengatur isLoading menjadi true sebelum permintaan dikirim
-      const url = 'http://localhost:3001/api/v1/auth'
+      const url = 'https://be-emma-modem-qx4d.vercel.app/api/v1'
 
       try {
-        const res = await axios.post(`${url}/login`, form)
+        const res = await axios.post(`${url}/auth/login`, form)
 
         // Simpan data payload ke local storage
         localStorage.setItem('userData', JSON.stringify(res.data))

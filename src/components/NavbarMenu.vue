@@ -40,7 +40,7 @@
           <div class="flex items-center ms-3">
             <div class="flex justify-center items-center gap-3">
               <p>
-                Hi  ,
+                Hi ,
                 <strong>
                   {{ username }}
                 </strong>
@@ -197,7 +197,7 @@ const email = ref('')
 const router = useRouter()
 
 const getUserProfile = async () => {
-  const url = 'http://localhost:3001/api/v1'
+  const url = 'https://be-emma-modem-qx4d.vercel.app/api/v1'
   const userData = JSON.parse(localStorage.getItem('userData'))
   const id = userData?.data?.payload?.user_id
 
@@ -212,10 +212,10 @@ const getUserProfile = async () => {
   }
 }
 const handleLogout = () => {
-  const url = 'http://localhost:3001/api/v1/auth'
+  const url = 'https://be-emma-modem-qx4d.vercel.app/api/v1'
 
   axios
-    .delete(`${url}/logout`)
+    .delete(`${url}/auth/logout`)
     .then(() => {
       localStorage.clear()
       router.push('/login')
