@@ -7,10 +7,16 @@
 </template>
 <script>
 import { ref } from 'vue'
-export default {
-  setup() {
-    const isLoading = ref(false)
+import { useRouter } from 'vue-router'
 
+export default {
+
+  setup() {
+    const router = useRouter()
+
+    router.push('/inbox')
+
+    const isLoading = ref(false)
     return {
       isLoading
     }
