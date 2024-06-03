@@ -7,6 +7,8 @@ import ModemView from '../views/ModemView.vue'
 import ResultView from '../views/ResultView.vue'
 import ProductDetailView from '../views/ProductDetailView.vue'
 import CreateProductView from '../views/CreateProductView.vue'
+import InboxView from '../views/InboxView.vue'
+
 import LoginView from '../views/LoginView.vue'
 import NotFoundView from '../components/NotFoundView.vue'
 // import TestView from '../views/TestView.vue'
@@ -18,6 +20,11 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView
+    },
+    {
+      path: '/inbox',
+      name: 'inbox',
+      component: InboxView
     },
     {
       path: '/login',
@@ -74,7 +81,7 @@ const router = createRouter({
 
 // Simpan halaman sebelumnya dalam localStorage
 router.beforeEach((to, from, next) => {
-  if (to.name !== 'login') {
+  if (to.name !== 'login' || to.name) {
     localStorage.setItem('previousRoute', from.fullPath)
   }
   next()
