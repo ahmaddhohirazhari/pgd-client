@@ -46,6 +46,15 @@
                   @change="handleFileUpload"
                   class="mt-4"
                 />
+                <!-- <div class="w-2/12 mt-5">
+                  <button
+                    @click="importFile"
+                    type="button"
+                    class="focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 w-full"
+                  >
+                    Import File
+                  </button>
+                </div> -->
               </div>
             </div>
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -84,32 +93,35 @@
                   <div class="flex gap-5">
                     <button
                       type="button"
+                      @click="handleCheck"
                       class="focus:outline-none flex gap-2 justify-center items-center text-white bg-green-500 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
                     >
-                      <svg
-                        fill="#ffffff"
-                        width="15px"
-                        height="15px"
-                        viewBox="0 -8 72 72"
-                        id="Layer_1"
-                        data-name="Layer 1"
-                        xmlns="http://www.w3.org/2000/svg"
-                        stroke="#ffffff"
-                      >
-                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                        <g
-                          id="SVGRepo_tracerCarrier"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        ></g>
-                        <g id="SVGRepo_iconCarrier">
-                          <title>check</title>
-                          <path
-                            d="M61.07,12.9,57,8.84a2.93,2.93,0,0,0-4.21,0L28.91,32.73,19.2,23A3,3,0,0,0,15,23l-4.06,4.07a2.93,2.93,0,0,0,0,4.21L26.81,47.16a2.84,2.84,0,0,0,2.1.89A2.87,2.87,0,0,0,31,47.16l30.05-30a2.93,2.93,0,0,0,0-4.21Z"
-                          ></path>
-                        </g>
-                      </svg>
-                      Check
+                      <div class="flex justify-center items-center gap-1">
+                        <svg
+                          fill="#ffffff"
+                          width="15px"
+                          height="15px"
+                          viewBox="0 -8 72 72"
+                          id="Layer_1"
+                          data-name="Layer 1"
+                          xmlns="http://www.w3.org/2000/svg"
+                          stroke="#ffffff"
+                        >
+                          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                          <g
+                            id="SVGRepo_tracerCarrier"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          ></g>
+                          <g id="SVGRepo_iconCarrier">
+                            <title>check</title>
+                            <path
+                              d="M61.07,12.9,57,8.84a2.93,2.93,0,0,0-4.21,0L28.91,32.73,19.2,23A3,3,0,0,0,15,23l-4.06,4.07a2.93,2.93,0,0,0,0,4.21L26.81,47.16a2.84,2.84,0,0,0,2.1.89A2.87,2.87,0,0,0,31,47.16l30.05-30a2.93,2.93,0,0,0,0-4.21Z"
+                            ></path>
+                          </g>
+                        </svg>
+                        Check
+                      </div>
                     </button>
                     <button
                       type="button"
@@ -140,12 +152,13 @@
                     </button>
                   </div>
                 </div>
+
                 <!-- Isi Tabel -->
-                <div v-if="excelData.length > 0" class="overflow-x-auto mt-4">
+                <div class="overflow-x-auto mt-4">
                   <table class="table-auto w-full">
                     <thead>
                       <tr class="bg-gray-200">
-                        <th>No</th>
+                        <th v-if="excelData && excelData[0]" class="px-4 py-2">No</th>
                         <th v-for="(value, key) in excelData[0]" :key="key" class="px-4 py-2">
                           {{ key }}
                         </th>
@@ -243,8 +256,10 @@ export default {
       limit: 20,
       totalPages: 0,
       loading: false,
+      isLoading: false,
       excelData: [],
-      searchKeyword: ''
+      searchKeyword: '',
+      selectedFile: null
     }
   },
   computed: {
@@ -274,23 +289,6 @@ export default {
     }
   },
   methods: {
-    fetchProducts() {
-      this.loading = true
-      axios
-        .get(
-          `https://dummyjson.com/products?limit=${this.limit}&skip=${(this.currentPage - 1) * this.limit}`
-        )
-        .then((res) => {
-          this.totalPages = Math.ceil(res.data.total / this.limit)
-          this.products = res.data.products
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-        .finally(() => {
-          this.loading = false // Set loading menjadi false saat pemanggilan AJAX selesai
-        })
-    },
     previousPage() {
       if (this.currentPage > 1) {
         this.currentPage--
@@ -306,14 +304,6 @@ export default {
     goToPage(page) {
       this.currentPage = page
       this.fetchProducts()
-    },
-    deleteProducts(productId) {
-      axios
-        .delete(`https://dummyjson.com/products/${productId}`)
-        .then(() => {})
-        .catch((err) => {
-          console.log(err)
-        })
     },
 
     alertDeleteProduct(productId) {
@@ -354,11 +344,60 @@ export default {
         this.excelData = jsonData
       }
       reader.readAsArrayBuffer(file)
+    },
+    showLoading() {
+      Swal.fire({
+        title: 'Tunggu sebentar...',
+        html: '<div class="spinner-border" role="status"></div> Sedang mengirim pesan ke modem...',
+        didOpen: () => {
+          Swal.showLoading()
+        },
+        allowOutsideClick: false
+      })
+    },
+    async importFile() {
+      try {
+        const url = import.meta.env.VITE_API_URL_LOCAL
+
+        await axios.post(`${url}/target/import`, this.excelData)
+        router.push('/result')
+      } catch (error) {
+        console.error('Error uploading data:', error)
+        this.isLoading = false
+      }
+    },
+    async sendSMS() {
+      try {
+        const url = import.meta.env.VITE_API_SMS
+        const excelData = this.excelData
+        let noHP = ''
+
+        for (const row of excelData) {
+          const hpNumber = row['SIM Card No'] // Sesuaikan dengan nama kolom nomor HP
+          if (hpNumber) {
+            noHP += hpNumber + ';'
+          }
+        }
+
+        // Hapus titik dua di akhir string
+        noHP = noHP.slice(0, -1)
+
+        const res = await axios.post(`${url}?msisdn=${noHP}&sms=%23AT%2BRESET`, this.excelData)
+        console.log(res)
+      } catch (error) {
+        console.error('Error uploading data:', error)
+        this.isLoading = false
+      }
+    },
+    async handleCheck() {
+      this.showLoading()
+      await this.importFile()
+      await this.sendSMS()
+      Swal.close()
     }
   },
 
   mounted() {
-    this.fetchProducts()
     this.$router = router
   }
 }

@@ -197,7 +197,7 @@ const email = ref('')
 const router = useRouter()
 
 const getUserProfile = async () => {
-  const url = 'https://be-emma-modem-qx4d.vercel.app/api/v1'
+  const url = import.meta.env.VITE_API_URL_LOCAL
   const userData = JSON.parse(localStorage.getItem('userData'))
   const id = userData?.data?.payload?.user_id
 
@@ -212,7 +212,7 @@ const getUserProfile = async () => {
   }
 }
 const handleLogout = () => {
-  const url = 'https://be-emma-modem-qx4d.vercel.app/api/v1'
+  const url = import.meta.env.VITE_API_URL_LOCAL
 
   axios
     .delete(`${url}/auth/logout`)

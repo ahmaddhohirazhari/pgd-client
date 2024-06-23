@@ -210,8 +210,7 @@ export default {
     })
     const handleLogin = async () => {
       isLoading.value = true // Mengatur isLoading menjadi true sebelum permintaan dikirim
-      const url = 'https://be-emma-modem-qx4d.vercel.app/api/v1'
-
+      const url = import.meta.env.VITE_API_URL_LOCAL
       try {
         const res = await axios.post(`${url}/auth/login`, form)
 
@@ -219,8 +218,25 @@ export default {
         localStorage.setItem('userData', JSON.stringify(res.data))
         localStorage.setItem('token', JSON.stringify(res.data.data.token))
         localStorage.setItem('role', JSON.stringify(res.data.data.payload.role))
+        const loginTimestamp = new Date().getTime()
+        localStorage.setItem('loginTimestamp', loginTimestamp)
 
         await router.push('/')
+        setTimeout(
+          () => {
+            clearLocalStorage()
+            Swal.fire({
+              icon: 'info',
+              title: 'Session Expired',
+              text: 'Your session has expired. Please login again.',
+              confirmButtonText: 'OK'
+            }).then(() => {
+              // Arahkan pengguna ke halaman login atau halaman lain
+              router.push('/login')
+            })
+          },
+          2 * 60 * 60 * 1000
+        )
       } catch (error) {
         Swal.fire({
           icon: 'error',
@@ -232,6 +248,32 @@ export default {
         isLoading.value = false // Mengatur isLoading menjadi false setelah permintaan selesai atau gagal
       }
     }
+    const clearLocalStorage = () => {
+      localStorage.removeItem('userData')
+      localStorage.removeItem('token')
+      localStorage.removeItem('role')
+      localStorage.removeItem('loginTimestamp')
+    }
+    const checkLoginExpiry = () => {
+      const loginTimestamp = localStorage.getItem('loginTimestamp')
+      if (loginTimestamp) {
+        const currentTime = new Date().getTime()
+        const timeElapsed = currentTime - loginTimestamp
+        const twoHoursInMilliseconds = 2 * 60 * 60 * 1000
+
+        if (timeElapsed >= twoHoursInMilliseconds) {
+          clearLocalStorage()
+        } else {
+          // Jadwalkan penghapusan data jika belum 2 jam
+          setTimeout(() => {
+            clearLocalStorage()
+          }, twoHoursInMilliseconds - timeElapsed)
+        }
+      }
+    }
+
+    // Periksa apakah data sudah kedaluwarsa setiap kali aplikasi dimuat
+    checkLoginExpiry()
 
     return {
       showPassword,

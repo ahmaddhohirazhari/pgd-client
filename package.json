@@ -1,5 +1,5 @@
 {
-  "name": "tes-intitek-presisi-integrasi",
+  "name": "emma-modem",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "axios": "^1.6.8",
+    "dotenv": "^16.4.5",
     "exceljs": "^4.4.0",
     "flowbite": "^2.3.0",
     "read-excel-file": "^5.8.0",
