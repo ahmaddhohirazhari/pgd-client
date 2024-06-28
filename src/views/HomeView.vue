@@ -29,9 +29,6 @@
           </div>
         </div>
       </div>
-      <router-link to="/inbox">
-        <button class="bg-primary p-2">to inbox</button>
-      </router-link>
     </div>
   </div>
 </template>
