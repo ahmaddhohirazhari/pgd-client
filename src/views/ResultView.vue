@@ -65,7 +65,8 @@
                 <div class="flex gap-2">
                   <button
                     type="button"
-                    class="focus:outline-none flex justify-center items-center text-white bg-green-500 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 "
+                    @click="downloadExcel"
+                    class="focus:outline-none flex justify-center items-center text-white bg-green-500 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
                   >
                     <svg
                       fill="#ffffff"
@@ -183,6 +184,7 @@ import axios from 'axios'
 import router from '@/router'
 import SidebarMenu from '../components/SidebarMenu.vue'
 import NavbarMenu from '../components/NavbarMenu.vue'
+import * as XLSX from 'xlsx'
 
 export default {
   components: {
@@ -235,6 +237,32 @@ export default {
     }
   },
   methods: {
+    async downloadExcel() {
+      try {
+        // Ambil data dari ExcelResult
+        const data = this.ExcelResult.map((row, index) => ({
+          'Status Modem': this.statusModem[index]?.message || 'Loading...',
+          ...row
+        }))
+        if (!data || data.length === 0) {
+          console.error('No data to export')
+          return
+        }
+
+        // Buat worksheet dari data JSON
+        const worksheet = XLSX.utils.json_to_sheet(data)
+
+        // Buat workbook baru dan tambahkan worksheet
+        const workbook = XLSX.utils.book_new()
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
+
+        // Tuliskan workbook ke file
+        XLSX.writeFile(workbook, 'data.xlsx')
+        console.log('Excel file has been generated successfully.')
+      } catch (error) {
+        console.error('Error downloading Excel:', error)
+      }
+    },
     async reloadInbox() {
       const url = import.meta.env.VITE_API_URL_LOCAL
       try {
