@@ -256,6 +256,35 @@ export default {
         const workbook = XLSX.utils.book_new()
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
 
+        // Menentukan lebar kolom berdasarkan data
+        const wscols = [
+          { wch: 20 },
+          { wch: 30 },
+          { wch: 20 },
+          { wch: 10 },
+          { wch: 20 },
+          { wch: 20 },
+          { wch: 20 },
+          { wch: 20 },
+          { wch: 20 },
+          { wch: 20 },
+          { wch: 20 },
+          { wch: 10 },
+          { wch: 10 },
+          { wch: 20 },
+          { wch: 20 }
+        ]
+        worksheet['!cols'] = wscols
+        // Menyesuaikan judul ke tengah dan tebal
+        const cell = worksheet['A1']
+        cell.s = {
+          font: { bold: true },
+          alignment: { horizontal: 'center', vertical: 'center' }
+        }
+        
+        // Menyesuaikan tinggi baris
+        worksheet['!rows'] = [{ hpx: 24 }]
+
         // Tuliskan workbook ke file
         XLSX.writeFile(workbook, 'data.xlsx')
         console.log('Excel file has been generated successfully.')
