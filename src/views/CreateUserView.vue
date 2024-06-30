@@ -13,9 +13,9 @@
               >
               <input
                 type="text"
-                name="userName"
-                id="userName"
-                v-model="userName"
+                name="username"
+                id="username"
+                v-model="username"
                 @change="handleuserName"
                 @input="checkInput"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
@@ -24,24 +24,7 @@
             </div>
             <div>
               <label
-                for="phone"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Phone</label
-              >
-              <input
-                type="text"
-                name="phone"
-                id="phone"
-                v-model="phone"
-                @change="handlephone"
-                @input="checkInput"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                required
-              />
-            </div>
-            <div>
-              <label
-                for="email"
+                for="password"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >Email</label
               >
@@ -56,6 +39,41 @@
                 required
               />
             </div>
+            <div>
+              <label
+                for="password"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >Password</label
+              >
+              <input
+                type="text"
+                name="password"
+                id="password"
+                v-model="phone"
+                @change="handlepassword"
+                @input="checkInput"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                required
+              />
+            </div>
+            <div>
+              <label
+                for="password"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >Confirm Password</label
+              >
+              <input
+                type="text"
+                name="confirmPassword"
+                id="confirmPassword"
+                v-model="phone"
+                @change="handleconfirmPassword"
+                @input="checkInput"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                required
+              />
+            </div>
+
             <div class="flex mt-[150px] justify-between">
               <button
                 type="button"
@@ -130,10 +148,10 @@ import router from '@/router'
 export default {
   data() {
     return {
-      userName: '',
-      phone: '',
-      university: '',
+      username: '',
       email: '',
+      password: '',
+      confirmPassword: '',
       loading: false,
       updateSuccess: false
     }
@@ -142,14 +160,17 @@ export default {
   methods: {
     createUser() {
       const body = {
-        userName: this.userName,
-        phone: this.phone,
+        username: this.username,
         email: this.email,
-        university: this.university
+        password: this.password,
+        confirmPassword: this.confirmPassword,
+        role: 'admin'
       }
       this.loading = true
+      const url = import.meta.env.VITE_API_URL_LOCAL
+
       axios
-        .post(`https://dummyjson.com/users/add`, body, {
+        .post(`${url}/user`, body, {
           headers: {
             'Content-Type': 'application/json'
           }
@@ -161,7 +182,6 @@ export default {
             position: 'center',
             icon: 'success',
             title: `Success Create New User`,
-            html: `<strong>User ID :</strong><i>${res.data.id}</i> <br/><strong> Name :</strong><i>${this.userName}</i>`,
             showConfirmButton: true,
             timer: 2000
           })
@@ -170,17 +190,18 @@ export default {
           }, 2000)
         })
         .catch((err) => {
+          this.loading = false
           console.log(err)
         })
     },
     handleuserName(event) {
-      this.userName = event.target.value
+      this.username = event.target.value
     },
-    handlephone(event) {
-      this.phone = event.target.value
+    handlepassword(event) {
+      this.password = event.target.value
     },
-    handleuniversity(event) {
-      this.university = event.target.value
+    handleconfirmPassword(event) {
+      this.confirmPassword = event.target.value
     },
     handleemail(event) {
       this.email = event.target.value
@@ -193,10 +214,10 @@ export default {
   computed: {
     isButtonDisabled() {
       return !(
-        this.userName.length > 0 &&
-        this.phone.length > 0 &&
-        this.university.length > 0 &&
-        this.email.length > 0
+        this.username.length > 0 &&
+        this.email.length > 0 &&
+        this.password.length > 0 &&
+        this.confirmPassword.length > 0
       )
     }
   },
