@@ -40,28 +40,9 @@
             </button>
           </div>
           <div class="shadow-md sm:rounded-lg p-5 mb-5 border">
-            <div
-              class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-900"
+            <!-- <div
+              class="flex items-center justify-between my-5 flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-900"
             >
-              <form class="">
-                <label
-                  for="showUsers"
-                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >Show Entries</label
-                >
-                <select
-                  id="showUsers"
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
-                >
-                  <option selected>5</option>
-                  <option value="10">10</option>
-                  <option value="15">15</option>
-                  <option value="20">20</option>
-                  <option value="25">25</option>
-                  <option value="30">30</option>
-                </select>
-              </form>
-
               <label for="table-search" class="sr-only">Search</label>
               <div class="relative">
                 <div
@@ -90,7 +71,7 @@
                   placeholder="Search for users"
                 />
               </div>
-            </div>
+            </div> -->
             <table
               class="marginMobile w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
             >
@@ -101,7 +82,7 @@
                   <th scope="col" class="px-6 py-3">No</th>
                   <th scope="col" class="px-6 py-3">Name</th>
                   <th scope="col" class="px-6 py-3">Email</th>
-                  <th scope="col" class="px-6 py-3">Action</th>
+                  <th scope="col" class="px-7 py-3">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -110,24 +91,17 @@
                   :key="index"
                   class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
                 >
-                  <td class="px-6 py-1">{{ user.id }}</td>
+                  <td class="px-6 py-1">{{ index + 1 }}</td>
 
                   <th
                     scope="row"
                     class="px-6 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                   >
-                    {{ user.firstName }} {{ user.lastName }}
+                    {{ user.username }}
                   </th>
                   <td class="px-6 py-1">{{ user.email }}</td>
                   <td class="px-6 py-1">
                     <div class="flex gap-3">
-                      <button
-                        type="button"
-                        @click="$router.push(`/user/${user.id}`)"
-                        class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium p-2 px-4 rounded-lg text-sm me-2"
-                      >
-                        Edit
-                      </button>
                       <button
                         type="button"
                         @click="alertDeleteUser(user.id)"
@@ -140,53 +114,6 @@
                 </tr>
               </tbody>
             </table>
-            <div class="flex justify-center items-center my-5 pb-5">
-              <!-- Paginasi -->
-              <nav aria-label="Page navigation example">
-                <ul class="flex items-center -space-x-px h-8 text-sm">
-                  <!-- Tombol Sebelumnya -->
-                  <li>
-                    <a
-                      href="#"
-                      @click.prevent="previousPage"
-                      :class="{ 'cursor-not-allowed': currentPage === 1 }"
-                      class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                      >Previous
-                      <span class="sr-only">Previous</span>
-                      <!-- Icon Sebelumnya -->
-                    </a>
-                  </li>
-                  <!-- Tombol Nomor Halaman -->
-                  <li v-for="page in visiblePages" :key="page">
-                    <a
-                      href="#"
-                      @click.prevent="goToPage(page)"
-                      :class="{
-                        'text-blue-600 border-blue-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700':
-                          currentPage === page,
-                        'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white':
-                          currentPage !== page
-                      }"
-                      class="flex items-center justify-center px-3 h-8 leading-tight"
-                    >
-                      {{ currentPage }}
-                    </a>
-                  </li>
-                  <!-- Tombol Selanjutnya -->
-                  <li>
-                    <a
-                      href="#"
-                      @click.prevent="nextPage"
-                      :class="{ 'cursor-not-allowed': currentPage === totalPages }"
-                      class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                      >Next
-                      <span class="sr-only"></span>
-                      <!-- Icon Selanjutnya -->
-                    </a>
-                  </li>
-                </ul>
-              </nav>
-            </div>
           </div>
         </div>
       </div>
@@ -215,36 +142,16 @@ export default {
       loading: false
     }
   },
-  computed: {
-    visiblePages() {
-      const visiblePages = []
-      const totalPages = Math.ceil(this.users.length / this.limit)
-      const maxVisible = 5 // Maximum number of visible pages
-      let startPage = Math.max(1, this.currentPage - Math.floor(maxVisible / 2))
-      let endPage = Math.min(totalPages, startPage + maxVisible - 1)
-
-      if (endPage - startPage < maxVisible - 1) {
-        startPage = Math.max(1, endPage - maxVisible + 1)
-      }
-
-      for (let i = startPage; i <= endPage; i++) {
-        visiblePages.push(i)
-      }
-
-      return visiblePages
-    }
-  },
   methods: {
     fetchUsers() {
+      const url = import.meta.env.VITE_API_URL_LOCAL
       this.loading = true
 
       axios
-        .get(
-          `https://dummyjson.com/users?limit=${this.limit}&skip=${(this.currentPage - 1) * this.limit}`
-        )
+        .get(`${url}/user`)
         .then((res) => {
-          this.totalPages = Math.ceil(res.data.total / this.limit)
-          this.users = res.data.users
+          console.log(res)
+          this.users = res.data.data
         })
         .catch((err) => {
           console.log(err)
@@ -253,33 +160,20 @@ export default {
           this.loading = false // Set loading menjadi false saat pemanggilan AJAX selesai
         })
     },
-    previousPage() {
-      if (this.currentPage > 1) {
-        this.currentPage--
-        this.fetchUsers()
-      }
-    },
-    nextPage() {
-      if (this.currentPage < this.totalPages) {
-        this.currentPage++
-        this.fetchUsers()
-      }
-    },
-    goToPage(page) {
-      this.currentPage = page
-      this.fetchUsers()
-    },
     deleteUser(userId) {
+      const url = import.meta.env.VITE_API_URL_LOCAL
       axios
-        .delete(`https://dummyjson.com/users/${userId}`)
-        .then(() => {})
+        .delete(`${url}/user/${userId}`)
+        .then(() => {
+          this.fetchUsers()
+        })
         .catch((err) => {
           console.log(err)
         })
     },
     alertDeleteUser(userId) {
       Swal.fire({
-        title: `Are you sure want to delete <br> User with ID : ${userId} ?`,
+        title: `Are you sure want to <br> Delete this Account ?`,
         text: "You won't be able to revert this!",
         icon: 'warning',
         showCancelButton: true,

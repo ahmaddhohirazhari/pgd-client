@@ -32,7 +32,7 @@
               alt="FlowBite Logo"
             />
             <span class="self-center text-sm font-semibold whitespace-nowrap"
-              >AUTOMATIC MODEM MAINTANANCE</span
+              >OTOMATISASI PEMELIHARAAN MODEM</span
             >
           </router-link>
         </div>

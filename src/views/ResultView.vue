@@ -62,11 +62,11 @@
                 </form>
 
                 <!-- Button -->
-                <!-- <div class="flex gap-2">
+                <div class="flex gap-2">
                   <button
                     type="button"
-                    disabled
-                    class="focus:outline-none flex justify-center items-center text-white bg-green-500 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 cursor-not-allowed"
+                    @click="downloadExcel"
+                    class="focus:outline-none flex justify-center items-center text-white bg-green-500 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
                   >
                     <svg
                       fill="#ffffff"
@@ -90,65 +90,9 @@
                         ></path>
                       </g>
                     </svg>
-                    XLS
+                    Download Excel
                   </button>
-                  <button
-                    type="button"
-                    class="focus:outline-none flex justify-center items-center text-white bg-green-500 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 cursor-not-allowed"
-                  >
-                    <svg
-                      fill="#ffffff"
-                      width="15px"
-                      height="15px"
-                      viewBox="0 0 32 32"
-                      version="1.1"
-                      xmlns="http://www.w3.org/2000/svg"
-                      stroke="#ffffff"
-                    >
-                      <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                      <g
-                        id="SVGRepo_tracerCarrier"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      ></g>
-                      <g id="SVGRepo_iconCarrier">
-                        <title>download</title>
-                        <path
-                          d="M18.313 13.625h-4.031v-6.594c0-0.563-0.469-1.031-1.031-1.031h-4.031c-0.594 0-1.063 0.469-1.063 1.031v6.594h-4.031c-0.531 0-0.719 0.344-0.313 0.75l6.688 6.656c0.188 0.188 0.438 0.281 0.719 0.281s0.563-0.094 0.75-0.281l6.656-6.656c0.375-0.406 0.25-0.75-0.313-0.75zM0 18.344v7.125c0 0.313 0.156 0.5 0.5 0.5h21.375c0.344 0 0.531-0.188 0.531-0.5v-7.125c0-0.313-0.25-0.531-0.531-0.531h-2.031c-0.281 0-0.531 0.25-0.531 0.531v4.531h-16.25v-4.531c0-0.313-0.219-0.531-0.5-0.531h-2.063c-0.281 0-0.5 0.25-0.5 0.531z"
-                        ></path>
-                      </g>
-                    </svg>
-                    XLSX
-                  </button>
-                  <button
-                    type="button"
-                    class="focus:outline-none flex justify-center items-center text-white bg-green-500 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 cursor-not-allowed"
-                  >
-                    <svg
-                      fill="#ffffff"
-                      width="15px"
-                      height="15px"
-                      viewBox="0 0 32 32"
-                      version="1.1"
-                      xmlns="http://www.w3.org/2000/svg"
-                      stroke="#ffffff"
-                    >
-                      <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                      <g
-                        id="SVGRepo_tracerCarrier"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      ></g>
-                      <g id="SVGRepo_iconCarrier">
-                        <title>download</title>
-                        <path
-                          d="M18.313 13.625h-4.031v-6.594c0-0.563-0.469-1.031-1.031-1.031h-4.031c-0.594 0-1.063 0.469-1.063 1.031v6.594h-4.031c-0.531 0-0.719 0.344-0.313 0.75l6.688 6.656c0.188 0.188 0.438 0.281 0.719 0.281s0.563-0.094 0.75-0.281l6.656-6.656c0.375-0.406 0.25-0.75-0.313-0.75zM0 18.344v7.125c0 0.313 0.156 0.5 0.5 0.5h21.375c0.344 0 0.531-0.188 0.531-0.5v-7.125c0-0.313-0.25-0.531-0.531-0.531h-2.031c-0.281 0-0.531 0.25-0.531 0.531v4.531h-16.25v-4.531c0-0.313-0.219-0.531-0.5-0.531h-2.063c-0.281 0-0.5 0.25-0.5 0.531z"
-                        ></path>
-                      </g>
-                    </svg>
-                    CSV
-                  </button>
-                </div> -->
+                </div>
               </div>
             </div>
             <!-- Tambahkan spinner di sini -->
@@ -240,6 +184,7 @@ import axios from 'axios'
 import router from '@/router'
 import SidebarMenu from '../components/SidebarMenu.vue'
 import NavbarMenu from '../components/NavbarMenu.vue'
+import * as XLSX from 'xlsx'
 
 export default {
   components: {
@@ -250,7 +195,7 @@ export default {
     return {
       ExcelResult: [],
       currentPage: 1,
-      limit: 50, // Number of items per page
+      limit: 1500, // Number of items per page
       totalPages: 1,
       statusModem: [],
       searchKeyword: '',
@@ -292,6 +237,61 @@ export default {
     }
   },
   methods: {
+    async downloadExcel() {
+      try {
+        // Ambil data dari ExcelResult
+        const data = this.ExcelResult.map((row, index) => ({
+          'Status Modem': this.statusModem[index]?.message || 'Loading...',
+          ...row
+        }))
+        if (!data || data.length === 0) {
+          console.error('No data to export')
+          return
+        }
+
+        // Buat worksheet dari data JSON
+        const worksheet = XLSX.utils.json_to_sheet(data)
+
+        // Buat workbook baru dan tambahkan worksheet
+        const workbook = XLSX.utils.book_new()
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
+
+        // Menentukan lebar kolom berdasarkan data
+        const wscols = [
+          { wch: 20 },
+          { wch: 30 },
+          { wch: 20 },
+          { wch: 10 },
+          { wch: 20 },
+          { wch: 20 },
+          { wch: 20 },
+          { wch: 20 },
+          { wch: 20 },
+          { wch: 20 },
+          { wch: 20 },
+          { wch: 10 },
+          { wch: 10 },
+          { wch: 20 },
+          { wch: 20 }
+        ]
+        worksheet['!cols'] = wscols
+        // Menyesuaikan judul ke tengah dan tebal
+        const cell = worksheet['A1']
+        cell.s = {
+          font: { bold: true },
+          alignment: { horizontal: 'center', vertical: 'center' }
+        }
+        
+        // Menyesuaikan tinggi baris
+        worksheet['!rows'] = [{ hpx: 24 }]
+
+        // Tuliskan workbook ke file
+        XLSX.writeFile(workbook, 'data.xlsx')
+        console.log('Excel file has been generated successfully.')
+      } catch (error) {
+        console.error('Error downloading Excel:', error)
+      }
+    },
     async reloadInbox() {
       const url = import.meta.env.VITE_API_URL_LOCAL
       try {

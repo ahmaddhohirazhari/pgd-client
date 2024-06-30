@@ -179,12 +179,12 @@
                   </table>
                 </div>
               </div>
-
+              <!-- Paginasi 
               <div class="flex justify-center items-center my-5">
-                <!-- Paginasi -->
+                Paginasi
                 <nav aria-label="Page navigation example">
                   <ul class="flex items-center -space-x-px h-8 text-sm">
-                    <!-- Tombol Sebelumnya -->
+                    Tombol Sebelumnya
                     <li>
                       <a
                         href="#"
@@ -193,10 +193,10 @@
                         class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                         >Previous
                         <span class="sr-only">Previous</span>
-                        <!-- Icon Sebelumnya -->
+                        Icon Sebelumnya
                       </a>
                     </li>
-                    <!-- Tombol Nomor Halaman -->
+                    Tombol Nomor Halaman
                     <li v-for="page in visiblePages" :key="page">
                       <a
                         href="#"
@@ -212,7 +212,7 @@
                         {{ currentPage }}
                       </a>
                     </li>
-                    <!-- Tombol Selanjutnya -->
+                    Tombol Selanjutnya
                     <li>
                       <a
                         href="#"
@@ -221,12 +221,12 @@
                         class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                         >Next
                         <span class="sr-only"></span>
-                        <!-- Icon Selanjutnya -->
+                        Icon Selanjutnya
                       </a>
                     </li>
                   </ul>
                 </nav>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
