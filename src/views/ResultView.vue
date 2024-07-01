@@ -95,6 +95,25 @@
                 </div>
               </div>
             </div>
+            <div class="flex justify-start">
+              <div class="flex justify-start my-4">
+                <form class="max-w-sm mx-auto">
+                  <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >Tampilkan Data</label
+                  >
+                  <select
+                    id="countries"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  >
+                    <option selected>Pilih Waktu</option>
+                    <option value="US">Hari ini</option>
+                    <option value="CA">Kemarin</option>
+                    <option value="FR">2 Hari Lalu</option>
+                    <option value="DE">Semua Data</option>
+                  </select>
+                </form>
+              </div>
+            </div>
             <!-- Tambahkan spinner di sini -->
             <div v-if="loading" class="h-64 flex justify-center items-center">
               <div class="text-center">
@@ -139,7 +158,7 @@
                           {{ (currentPage - 1) * limit + index + 1 }}
                         </td>
                         <td
-                          class="border text-center px-4 py-2"
+                          class="border text-center text-sm px-4 py-2"
                           :style="{
                             color:
                               statusModem && statusModem[index]
@@ -154,7 +173,9 @@
                         >
                           {{
                             statusModem && statusModem[0]
-                              ? statusModem[index].message
+                              ? statusModem[index].message === '+RESET:OK'
+                                ? ' Succes Reset Modem'
+                                : 'Failed Reset Modem'
                               : 'Loading...'
                           }}
                         </td>
@@ -281,7 +302,7 @@ export default {
           font: { bold: true },
           alignment: { horizontal: 'center', vertical: 'center' }
         }
-        
+
         // Menyesuaikan tinggi baris
         worksheet['!rows'] = [{ hpx: 24 }]
 
