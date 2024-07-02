@@ -376,14 +376,8 @@ export default {
       this.loading = true
       const url = import.meta.env.VITE_API_URL_LOCAL
       try {
-        const response = await axios.get(`${url}/target/get-data-today`, {
-          params: {
-            page: this.currentPage,
-            limit: this.limit
-          }
-        })
+        const response = await axios.get(`${url}/target/get-data-today`)
         this.ExcelResult = response.data.data.data
-        this.totalPages = response.data.totalPages
         this.loading = false
       } catch (error) {
         console.error('Error:', error)
@@ -397,7 +391,7 @@ export default {
       try {
         this.loading = true
         if (!searchTerm) {
-          this.selectedOption = 'today' // Mengatur nilai selectedOption ke 'today'
+          this.selectedOption = 'Pilih Waktu' // Mengatur nilai selectedOption ke 'today'
           this.handleSelectChange()
         }
         const response = await axios.get(`${url}/target/search/${searchTerm}`, {
@@ -427,7 +421,8 @@ export default {
 
     async handleSelectChange() {
       if (this.selectedOption === 'today') {
-        await this.getDataToday()
+        this.getStatus()
+        this.getDataToday()
       } else {
         await this.getAllData()
       }
@@ -464,7 +459,7 @@ export default {
     }
   },
   mounted() {
-    // this.getStatus()
+    this.getStatus()
     this.getAllData()
     this.getDataToday()
     this.performSearch()

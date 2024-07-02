@@ -78,14 +78,14 @@
                   {{
                     totalOflineDaily === 0
                       ? 0
-                      : (totalOflineDaily - totalSuccessDaily) / totalOflineDaily
+                      : ((totalOflineDaily - totalSuccessDaily) / totalOflineDaily) * 100
                   }}%
                 </text>
               </svg>
             </div>
             <div class="flex justify-center items-center">
               <p class="text-2xl fw-boldz" style="color: #d35a51">
-                {{ totalSuccessMonthly }} Modem Failed
+                {{ totalOflineDaily - totalSuccessDaily }} Modem Failed
               </p>
             </div>
           </div>
@@ -112,7 +112,7 @@
           a 15.9155 15.9155 0 0 1 0 -31.831"
                 />
                 <text x="18" y="20.35" class="percentage">
-                  {{ totalOflineDaily === 0 ? 0 : totalSuccessDaily / totalOflineDaily }}%
+                  {{ totalOflineDaily === 0 ? 0 : (totalSuccessDaily / totalOflineDaily) * 100 }}%
                 </text>
               </svg>
             </div>
@@ -199,6 +199,7 @@ export default {
       const url = import.meta.env.VITE_API_URL_LOCAL
       try {
         const response = await axios.get(`${url}/target/count-success/daily`)
+        console.log(response.data.data.data.count)
         return (this.totalSuccessDaily = response.data.data.data.count)
       } catch (error) {
         console.error('Error:', error)
@@ -228,6 +229,7 @@ export default {
   mounted() {
     this.getOfflineToday()
     this.getOfflineMonthly()
+    this.getSuccessDaily()
   }
 }
 </script>
