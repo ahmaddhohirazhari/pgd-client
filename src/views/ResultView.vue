@@ -10,7 +10,10 @@
             Result Modem Check
           </div>
 
-          <div class="relative p-5 border overflow-x-auto shadow-md sm:rounded-lg">
+          <div
+            class="relative p-5 border overflow-x-auto shadow-md sm:rounded-lg"
+            style="background-color: #ffffff"
+          >
             <div class="relative overflow-x-auto p-5 shadow-md sm:rounded-lg">
               <!-- Search -->
               <div

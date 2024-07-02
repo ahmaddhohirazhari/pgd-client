@@ -59,7 +59,10 @@
               </div>
             </div>
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-              <div class="relative overflow-x-auto p-5 border shadow-md sm:rounded-lg">
+              <div
+                class="relative overflow-x-auto p-5 border shadow-md sm:rounded-lg"
+                style="background-color: #ffffff"
+              >
                 <!-- Search -->
                 <div
                   class="flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-end pb-4"
