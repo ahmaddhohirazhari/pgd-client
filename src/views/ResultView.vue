@@ -39,8 +39,9 @@
                     type="text"
                     id="table-search"
                     class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Search for items"
+                    placeholder="Search Location Name"
                     v-model="searchKeyword"
+                    @input="handleInputChange($event)"
                   />
                 </div>
 
@@ -101,16 +102,28 @@
                   <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     >Tampilkan Data</label
                   >
-                  <select
-                    id="countries"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  >
-                    <option selected>Pilih Waktu</option>
-                    <option value="US">Hari ini</option>
-                    <option value="CA">Kemarin</option>
-                    <option value="FR">2 Hari Lalu</option>
-                    <option value="DE">Semua Data</option>
-                  </select>
+                  <div class="flex gap-5">
+                    <select
+                      id="datamodem"
+                      v-model="selectedOption"
+                      @change="handleSelectChange"
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
+                      <option selected>Pilih Waktu</option>
+                      <option value="today">Hari ini</option>
+                      <option value="all">Semua Data</option>
+                    </select>
+                    <!-- <select
+                      id="statusmodem"
+                      v-model="selectedOption2"
+                      @change="handleSelectChange2"
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
+                      <option selected>Pilih Status</option>
+                      <option value="success">Success</option>
+                      <option value="failed">Failed</option>
+                    </select> -->
+                  </div>
                 </form>
               </div>
             </div>
@@ -166,7 +179,9 @@
                                   ? 'green'
                                   : statusModem[index].message === 'Modem No Respon'
                                     ? 'red'
-                                    : 'blue'
+                                    : statusModem[index].message === 'Incorrect+Access+Code'
+                                      ? 'red'
+                                      : 'blue'
                                 : 'blue',
                             'font-weight': 'bold'
                           }"
@@ -191,7 +206,9 @@
                   </table>
                 </div>
               </div>
-              <div v-else class="h-64 flex justify-center items-center">Tidak Ada Data</div>
+              <div v-else class="h-64 font-bold flex justify-center items-center">
+                Tidak Ada Data Hari ini
+              </div>
             </div>
           </div>
         </div>
@@ -209,17 +226,21 @@ import * as XLSX from 'xlsx'
 
 export default {
   components: {
-    NavbarMenu, // Daftarkan komponen NavbarMenu
-    SidebarMenu // Daftarkan komponen SidebarMenu
+    NavbarMenu,
+    SidebarMenu
   },
   data() {
     return {
       ExcelResult: [],
       currentPage: 1,
-      limit: 1500, // Number of items per page
+      limit: 500, // Number of items per page
       totalPages: 1,
       statusModem: [],
       searchKeyword: '',
+      selectedOption: 'Pilih Waktu',
+      selectedOption2: 'Pilih Status',
+      searchPerformed: false,
+      debounceTimer: null,
       loading: false,
       loadingStatus: false
     }
@@ -328,7 +349,6 @@ export default {
       try {
         const response = await axios.get(`${url}/target/get-status`)
         this.statusModem = response.data
-        console.log(response.data)
       } catch (error) {
         console.error('Error:', error)
         this.loadingStatus = false
@@ -352,7 +372,80 @@ export default {
         this.loading = false
       }
     },
+    async getDataToday() {
+      this.loading = true
+      const url = import.meta.env.VITE_API_URL_LOCAL
+      try {
+        const response = await axios.get(`${url}/target/get-data-today`, {
+          params: {
+            page: this.currentPage,
+            limit: this.limit
+          }
+        })
+        this.ExcelResult = response.data.data.data
+        this.totalPages = response.data.totalPages
+        this.loading = false
+      } catch (error) {
+        console.error('Error:', error)
+        this.loading = false
+      }
+    },
+    async performSearch() {
+      const url = import.meta.env.VITE_API_URL_LOCAL
+      const searchTerm = this.searchKeyword.trim()
 
+      try {
+        this.loading = true
+        if (!searchTerm) {
+          this.selectedOption = 'today' // Mengatur nilai selectedOption ke 'today'
+          this.handleSelectChange()
+        }
+        const response = await axios.get(`${url}/target/search/${searchTerm}`, {
+          params: {
+            data: searchTerm
+          }
+        })
+        this.ExcelResult = response.data.data.data // Adjust based on your response structure
+        this.searchPerformed = true
+      } catch (error) {
+        console.error('Error performing search:', error)
+      } finally {
+        this.loading = false
+      }
+    },
+    handleInputChange(event) {
+      const searchTerm = event.target.value.trim()
+      console.log(searchTerm)
+      // Clear previous debounce timer
+      clearTimeout(this.debounceTimer)
+
+      // Set new debounce timer
+      this.debounceTimer = setTimeout(() => {
+        this.performSearch()
+      }, 500) // Debounce for 1 second (1000 milliseconds)
+    },
+
+    async handleSelectChange() {
+      if (this.selectedOption === 'today') {
+        await this.getDataToday()
+      } else {
+        await this.getAllData()
+      }
+      // Add other conditions for different options if needed
+    },
+    // async handleSelectChange2() {
+    // if (this.selectedOption2 === 'success') {
+    // const filteredExcelResult = this.ExcelResult.filter((item) => {
+    //   item.status === '+RESET:OK'
+    // console.log(this.ExcelResult)
+    // // })
+    // console.log(filteredExcelResult)
+    // this.ExcelResult = filteredExcelResult
+    // } else {
+    //   await this.getAllData()
+    // }
+    // Add other conditions for different options if needed
+    // },
     previousPage() {
       if (this.currentPage > 1) {
         this.currentPage--
@@ -373,6 +466,8 @@ export default {
   mounted() {
     // this.getStatus()
     this.getAllData()
+    this.getDataToday()
+    this.performSearch()
     this.reloadInbox()
     this.$router = router
   }

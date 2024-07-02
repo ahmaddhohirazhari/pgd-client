@@ -1,3 +1,4 @@
+<!-- eslint-disable no-unused-vars -->
 <template>
   <NavbarMenu />
   <SidebarMenu />
@@ -13,7 +14,7 @@
             class="flex py-5 items-center flex-col justify-center h-24 border rounded bg-gray-50 dark:bg-gray-800"
             style="height: 200px; border-color: #f7b924"
           >
-            <p class="text-sm font-bold text-grey-700">Total Offline Hari ini</p>
+            <p class="text-sm font-bold text-grey-700">Total Offline Bulan ini</p>
             <div class="flex">
               <img src="/icon-laptop.png" class="h-[150px]" alt="FlowBite Logo" />
               <div class="flex flex-col justify-center items-center">
@@ -21,7 +22,7 @@
                   class="text-black-900 dark:text-black-500"
                   style="font-size: 40px; font-weight: 800; color: #f7b924"
                 >
-                  100
+                  {{ totalOflineMonthly }}
                 </p>
                 <p style="font-size: 20px; font-weight: 600; color: #f7b924">Modem</p>
               </div>
@@ -42,7 +43,7 @@
                   class="text-black-900 dark:text-black-500"
                   style="font-size: 40px; font-weight: 800; color: #16aaff"
                 >
-                  100
+                  {{ totalOflineDaily }}
                 </p>
                 <p style="font-size: 20px; font-weight: 600; color: #16aaff">Modem</p>
               </div>
@@ -68,16 +69,24 @@
                 />
                 <path
                   class="circle"
-                  stroke-dasharray="30, 100"
+                  :stroke-dasharray="`${dashValueFailed}, 100`"
                   d="M18 2.0845
           a 15.9155 15.9155 0 0 1 0 31.831
           a 15.9155 15.9155 0 0 1 0 -31.831"
                 />
-                <text x="18" y="20.35" class="percentage">30%</text>
+                <text x="18" y="20.35" class="percentage">
+                  {{
+                    totalOflineDaily === 0
+                      ? 0
+                      : (totalOflineDaily - totalSuccessDaily) / totalOflineDaily
+                  }}%
+                </text>
               </svg>
             </div>
             <div class="flex justify-center items-center">
-              <p class="text-2xl fw-boldz" style="color: #d35a51">30 Modem Failed</p>
+              <p class="text-2xl fw-boldz" style="color: #d35a51">
+                {{ totalSuccessMonthly }} Modem Failed
+              </p>
             </div>
           </div>
           <div
@@ -97,12 +106,14 @@
                 />
                 <path
                   class="circle"
-                  stroke-dasharray="30, 100"
+                  :stroke-dasharray="`${dashValue}, 100`"
                   d="M18 2.0845
           a 15.9155 15.9155 0 0 1 0 31.831
           a 15.9155 15.9155 0 0 1 0 -31.831"
                 />
-                <text x="18" y="20.35" class="percentage">30%</text>
+                <text x="18" y="20.35" class="percentage">
+                  {{ totalOflineDaily === 0 ? 0 : totalSuccessDaily / totalOflineDaily }}%
+                </text>
               </svg>
             </div>
             <div class="flex justify-center items-center">
@@ -110,7 +121,7 @@
                 class="text-2xl text-green-500 dark:text-green-500 fw-boldz"
                 style="color: #4cc790"
               >
-                30 Modem Success
+                {{ totalSuccessDaily }} Modem Success
               </p>
             </div>
           </div>
@@ -120,9 +131,105 @@
   </div>
 </template>
 
-<script setup>
+<script>
 import SidebarMenu from '../components/SidebarMenu.vue'
 import NavbarMenu from '../components/NavbarMenu.vue'
+import axios from 'axios'
+
+export default {
+  components: {
+    NavbarMenu,
+    SidebarMenu
+  },
+  data() {
+    return {
+      totalOflineDaily: 0,
+      totalOflineMonthly: 0,
+      totalSuccessDaily: 0,
+      totalSuccessMonthly: 0,
+      dashValue: 0,
+      dashValueFailed: 0
+    }
+  },
+  computed: {
+    computedDashValue() {
+      if (this.totalOflineDaily !== 0) {
+        return (this.totalSuccessDaily / this.totalOflineDaily) * 100
+      } else {
+        return 0 // Jika totalOflineDaily adalah 0, mungkin menetapkan nilai default atau lainnya
+      }
+    },
+    computedDashValueFAiled() {
+      if (this.totalOflineDaily !== 0) {
+        return ((this.totalOflineDaily - this.totalSuccessDaily) / this.totalOflineDaily) * 100
+      } else {
+        return 0 // Jika totalOflineDaily adalah 0, mungkin menetapkan nilai default atau lainnya
+      }
+    }
+  },
+  watch: {
+    // Watcher untuk memantau perubahan pada totalFailedDaily atau totalOflineDaily
+    totalFailedDaily() {
+      // Set dashValue saat totalSuccessDaily berubah
+      this.dashValueFailed = this.computedDashValueFAiled
+    },
+    // Watcher untuk memantau perubahan pada totalSuccessDaily atau totalOflineDaily
+    totalSuccessDaily() {
+      // Set dashValue saat totalSuccessDaily berubah
+      this.dashValue = this.computedDashValue
+    },
+    totalOflineDaily() {
+      // Set dashValue saat totalOflineDaily berubah
+      this.dashValue = this.computedDashValue
+    }
+  },
+  methods: {
+    async getOfflineToday() {
+      // this.loading = true
+      const url = import.meta.env.VITE_API_URL_LOCAL
+      try {
+        const response = await axios.get(`${url}/target/count-data/daily`)
+        return (this.totalOflineDaily = response.data.data.data.count)
+      } catch (error) {
+        console.error('Error:', error)
+      }
+    },
+    async getSuccessDaily() {
+      // this.loading = true
+      const url = import.meta.env.VITE_API_URL_LOCAL
+      try {
+        const response = await axios.get(`${url}/target/count-success/daily`)
+        return (this.totalSuccessDaily = response.data.data.data.count)
+      } catch (error) {
+        console.error('Error:', error)
+      }
+    },
+    async getOfflineMonthly() {
+      // this.loading = true
+      const url = import.meta.env.VITE_API_URL_LOCAL
+      try {
+        const response = await axios.get(`${url}/target/count-data/monthly`)
+        return (this.totalOflineMonthly = response.data.data.data.count)
+      } catch (error) {
+        console.error('Error:', error)
+      }
+    },
+    async getSuccessMonthly() {
+      // this.loading = true
+      const url = import.meta.env.VITE_API_URL_LOCAL
+      try {
+        const response = await axios.get(`${url}/target/count-success/monthly`)
+        return (this.totalSuccessMonthly = response.data.data.data.count)
+      } catch (error) {
+        console.error('Error:', error)
+      }
+    }
+  },
+  mounted() {
+    this.getOfflineToday()
+    this.getOfflineMonthly()
+  }
+}
 </script>
 
 <style scoped>

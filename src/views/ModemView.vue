@@ -40,6 +40,7 @@
                   >Upload file</label
                 >
                 <input
+                  ref="fileInputRef"
                   type="file"
                   id="fileInput"
                   accept=".xlsx"
@@ -61,9 +62,9 @@
               <div class="relative overflow-x-auto p-5 border shadow-md sm:rounded-lg">
                 <!-- Search -->
                 <div
-                  class="flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4"
+                  class="flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-end pb-4"
                 >
-                  <label for="table-search" class="sr-only">Search</label>
+                  <!-- <label for="table-search" class="sr-only">Search</label>
                   <div class="relative">
                     <div
                       class="absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none"
@@ -89,7 +90,7 @@
                       placeholder="Search for items"
                       v-model="searchKeyword"
                     />
-                  </div>
+                  </div> -->
                   <div class="flex gap-5">
                     <button
                       type="button"
@@ -125,6 +126,7 @@
                     </button>
                     <button
                       type="button"
+                      @click="handledeleteSession"
                       class="text-gray-900 gap-2 bg-[#F7BE38] hover:bg-[#F7BE38]/90 focus:ring-4 focus:outline-none focus:ring-[#F7BE38]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#F7BE38]/50 me-2 mb-2"
                     >
                       <svg
@@ -394,6 +396,10 @@ export default {
       await this.importFile()
       await this.sendSMS()
       Swal.close()
+    },
+    handledeleteSession() {
+      this.excelData = []
+      this.$refs.fileInputRef.value = null
     }
   },
 
