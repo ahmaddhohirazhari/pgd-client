@@ -10,11 +10,11 @@
           <img
             src="@/assets/Logo-ITT-PLN.png"
             alt="Description of the image"
-            class="w-[140px] bg-white"
+            class="w-[180px] bg-white"
           />
         </div>
         <div class="flex justify-center items-center my-5">
-          <p class="font-bold text-black-500 ">Analytics Dashboard</p>
+          <p class="font-bold text-black-500 text-xl bg-white p-2 rounded-sm">Analytics Dashboard</p>
         </div>
         <div class="my-5">
           <button @click="refreshPage" class="btn bg-teal-500 p-2 rounded text-zinc-300 font-bold">
