@@ -6,8 +6,15 @@
     <!-- <router-view class="mt-[150px]" /> -->
     <div class="pe-11">
       <div class="flex justify-between">
-        <div class="my-5">
-          <p class="font-bold text-gray-500">Analytics Dashboard</p>
+        <div class="flex justify-end items-center mt-5 me-3">
+          <img
+            src="@/assets/Logo-ITT-PLN.png"
+            alt="Description of the image"
+            class="w-[140px] bg-white"
+          />
+        </div>
+        <div class="flex justify-center items-center my-5">
+          <p class="font-bold text-black-500 ">Analytics Dashboard</p>
         </div>
         <div class="my-5">
           <button @click="refreshPage" class="btn bg-teal-500 p-2 rounded text-zinc-300 font-bold">
@@ -156,7 +163,8 @@ export default {
       totalSuccessMonthly: 0,
       dashValue: 0,
       dashValueFailed: 0,
-      loading: false
+      loading: false,
+      imageUrl: './assets/Logo-ITT-PLN.png'
     }
   },
   methods: {
