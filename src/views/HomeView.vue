@@ -5,8 +5,15 @@
   <div class="flex justify-between flex-col gap-[130px] p-4 sm:ml-64">
     <!-- <router-view class="mt-[150px]" /> -->
     <div class="pe-11">
-      <div class="my-5">
-        <p class="font-bold text-gray-500">Analytics Dashboard</p>
+      <div class="flex justify-between">
+        <div class="my-5">
+          <p class="font-bold text-gray-500">Analytics Dashboard</p>
+        </div>
+        <div class="my-5">
+          <button @click="refreshPage" class="btn bg-teal-500 p-2 rounded text-zinc-300 font-bold">
+            Refresh Data
+          </button>
+        </div>
       </div>
       <div class="p-11 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-5">
         <div class="grid grid-cols-3 gap-4 mb-4">
@@ -69,17 +76,13 @@
                 />
                 <path
                   class="circle"
-                  :stroke-dasharray="`${dashValueFailed}, 100`"
+                  :stroke-dasharray="`${((totalOflineDaily - totalSuccessDaily) / totalOflineDaily) * 100}, 100`"
                   d="M18 2.0845
           a 15.9155 15.9155 0 0 1 0 31.831
           a 15.9155 15.9155 0 0 1 0 -31.831"
                 />
                 <text x="18" y="20.35" class="percentage">
-                  {{
-                    totalOflineDaily === 0
-                      ? 0
-                      : ((totalOflineDaily - totalSuccessDaily) / totalOflineDaily) * 100
-                  }}%
+                  {{ totalOflineDaily !== 0 ? totalFailedPercent : 0 }}%
                 </text>
               </svg>
             </div>
@@ -106,13 +109,13 @@
                 />
                 <path
                   class="circle"
-                  :stroke-dasharray="`${dashValue}, 100`"
+                  :stroke-dasharray="`${(totalSuccessDaily / totalOflineDaily) * 100}, 100`"
                   d="M18 2.0845
           a 15.9155 15.9155 0 0 1 0 31.831
           a 15.9155 15.9155 0 0 1 0 -31.831"
                 />
                 <text x="18" y="20.35" class="percentage">
-                  {{ totalOflineDaily === 0 ? 0 : (totalSuccessDaily / totalOflineDaily) * 100 }}%
+                  {{ totalOflineDaily !== 0 ? totalSuccessPercent : 0 }}%
                 </text>
               </svg>
             </div>
@@ -135,6 +138,7 @@
 import SidebarMenu from '../components/SidebarMenu.vue'
 import NavbarMenu from '../components/NavbarMenu.vue'
 import axios from 'axios'
+import Swal from 'sweetalert2'
 
 export default {
   components: {
@@ -146,65 +150,42 @@ export default {
       totalOflineDaily: 0,
       totalOflineMonthly: 0,
       totalSuccessDaily: 0,
+      totalSuccessPercent: 0,
+      totalFailedDaily: 0,
+      totalFailedPercent: 0,
       totalSuccessMonthly: 0,
       dashValue: 0,
-      dashValueFailed: 0
-    }
-  },
-  computed: {
-    computedDashValue() {
-      if (this.totalOflineDaily !== 0) {
-        return (this.totalSuccessDaily / this.totalOflineDaily) * 100
-      } else {
-        return 0 // Jika totalOflineDaily adalah 0, mungkin menetapkan nilai default atau lainnya
-      }
-    },
-    computedDashValueFAiled() {
-      if (this.totalOflineDaily !== 0) {
-        return ((this.totalOflineDaily - this.totalSuccessDaily) / this.totalOflineDaily) * 100
-      } else {
-        return 0 // Jika totalOflineDaily adalah 0, mungkin menetapkan nilai default atau lainnya
-      }
-    }
-  },
-  watch: {
-    // Watcher untuk memantau perubahan pada totalFailedDaily atau totalOflineDaily
-    totalFailedDaily() {
-      // Set dashValue saat totalSuccessDaily berubah
-      this.dashValueFailed = this.computedDashValueFAiled
-    },
-    // Watcher untuk memantau perubahan pada totalSuccessDaily atau totalOflineDaily
-    totalSuccessDaily() {
-      // Set dashValue saat totalSuccessDaily berubah
-      this.dashValue = this.computedDashValue
-    },
-    totalOflineDaily() {
-      // Set dashValue saat totalOflineDaily berubah
-      this.dashValue = this.computedDashValue
+      dashValueFailed: 0,
+      loading: false
     }
   },
   methods: {
     async getOfflineToday() {
-      // this.loading = true
       const url = import.meta.env.VITE_API_URL_LOCAL
       try {
         const response = await axios.get(`${url}/target/count-data/daily`)
-        return (this.totalOflineDaily = response.data.data.data.count)
+        const responseDaily = await axios.get(`${url}/target/count-success/daily`)
+
+        this.totalOflineDaily = response.data.data.data.count
+        this.totalSuccessDaily = responseDaily.data.data.data.count
+        this.totalSuccessPercent = ((this.totalSuccessDaily / this.totalOflineDaily) * 100).toFixed(
+          1
+        )
+        this.totalFailedDaily = this.totalOflineDaily - this.totalSuccessDaily
+        this.totalFailedPercent = ((this.totalFailedDaily / this.totalOflineDaily) * 100).toFixed(1)
+
+        return {
+          totalOflineDaily: this.totalOflineDaily,
+          totalSuccessDaily: this.totalSuccessDaily,
+          totalFailedDaily: this.totalFailedDaily,
+          totalFailedPercent: this.totalFailedPercent,
+          totalSuccessPercent: this.totalSuccessPercent
+        }
       } catch (error) {
         console.error('Error:', error)
       }
     },
-    async getSuccessDaily() {
-      // this.loading = true
-      const url = import.meta.env.VITE_API_URL_LOCAL
-      try {
-        const response = await axios.get(`${url}/target/count-success/daily`)
-        console.log(response.data.data.data.count)
-        return (this.totalSuccessDaily = response.data.data.data.count)
-      } catch (error) {
-        console.error('Error:', error)
-      }
-    },
+
     async getOfflineMonthly() {
       // this.loading = true
       const url = import.meta.env.VITE_API_URL_LOCAL
@@ -224,12 +205,28 @@ export default {
       } catch (error) {
         console.error('Error:', error)
       }
+    },
+
+    showLoading() {
+      Swal.fire({
+        title: 'Tunggu sebentar...',
+        html: '<div class="spinner-border" role="status"></div> Sedang mengambil data terbaru...',
+        didOpen: () => {
+          Swal.showLoading()
+        },
+        allowOutsideClick: false
+      })
+    },
+    refreshPage() {
+      this.showLoading()
+      setTimeout(() => {
+        window.location.reload()
+      }, 500)
     }
   },
   mounted() {
     this.getOfflineToday()
     this.getOfflineMonthly()
-    this.getSuccessDaily()
   }
 }
 </script>
