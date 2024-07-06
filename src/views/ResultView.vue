@@ -99,7 +99,7 @@
                 </div>
               </div>
             </div>
-            <div class="flex justify-start">
+            <div class="flex justify-start gap-14">
               <div class="flex justify-start my-4">
                 <form class="max-w-sm mx-auto">
                   <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -116,18 +116,19 @@
                       <option value="today">Hari ini</option>
                       <option value="all">Semua Data</option>
                     </select>
-                    <!-- <select
-                      id="statusmodem"
-                      v-model="selectedOption2"
-                      @change="handleSelectChange2"
-                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    >
-                      <option selected>Pilih Status</option>
-                      <option value="success">Success</option>
-                      <option value="failed">Failed</option>
-                    </select> -->
                   </div>
                 </form>
+              </div>
+              <div class="my-5">
+                <label class="block text-sm font-medium text-white-900 opacity-0"
+                  >Tampilkan Data</label
+                >
+                <button
+                  @click="refreshData"
+                  class="btn bg-teal-500 p-3 rounded-md text-black-300 font-bold"
+                >
+                  Refresh Data
+                </button>
               </div>
             </div>
             <!-- Tambahkan spinner di sini -->
@@ -154,64 +155,47 @@
                 </div>
               </div>
             </div>
-            <div v-else>
-              <div v-if="ExcelResult && ExcelResult[0]">
-                <!-- Table -->
-                <div class="overflow-x-auto mt-4">
-                  <table class="table-auto w-full">
-                    <thead>
-                      <tr class="bg-gray-200">
-                        <th v-if="ExcelResult && ExcelResult[0]" class="">No</th>
-                        <th v-if="ExcelResult && ExcelResult[0]" class="">Status</th>
-                        <th v-for="(value, key) in ExcelResult[0]" :key="key" class="">
-                          {{ key }}
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="(row, index) in paginatedData" :key="index">
-                        <td class="border text-center px-4 py-2">
-                          {{ (currentPage - 1) * limit + index + 1 }}
-                        </td>
-                        <td
-                          class="border text-center text-sm px-4 py-2"
-                          :style="{
-                            color:
-                              statusModem && statusModem[index]
-                                ? statusModem[index].message === '+RESET:OK'
-                                  ? 'green'
-                                  : statusModem[index].message === 'Modem No Respon'
-                                    ? 'red'
-                                    : statusModem[index].message === 'Incorrect+Access+Code'
-                                      ? 'red'
-                                      : 'blue'
-                                : 'blue',
-                            'font-weight': 'bold'
-                          }"
-                        >
-                          {{
-                            statusModem && statusModem[0]
-                              ? statusModem[index].message === '+RESET:OK'
-                                ? ' Succes Reset Modem'
-                                : 'Failed Reset Modem'
-                              : 'Loading...'
-                          }}
-                        </td>
-                        <td
-                          v-for="(value, key) in row"
-                          :key="key"
-                          class="border text-center p-3 min-w-10"
-                        >
-                          {{ value }}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+            <div v-if="ExcelResult && ExcelResult[0] && !loading">
+              <!-- Table -->
+              <div class="overflow-x-auto mt-4">
+                <table class="table-auto w-full">
+                  <thead>
+                    <tr class="bg-gray-200">
+                      <th v-if="ExcelResult && ExcelResult[0]" class="">No</th>
+                      <th v-for="(value, key) in ExcelResult[0]" :key="key" class="">
+                        {{ key }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(row, index) in paginatedData" :key="index">
+                      <td class="border text-center px-4 py-2">
+                        {{ (currentPage - 1) * limit + index + 1 }}
+                      </td>
+
+                      <td
+                        v-for="(value, key) in row"
+                        :key="key"
+                        :class="{
+                          border: true,
+                          'text-center': true,
+                          'p-3': true,
+                          'min-w-10': true,
+                          'font-semibold': true,
+                          'text-green-400': value === '+RESET:OK',
+                          'text-gray-600': value === 'Incorrect+Access+Code',
+                          'text-red-600': value === null
+                        }"
+                      >
+                        {{ getStatusText(value) }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-              <div v-else class="h-64 font-bold flex justify-center items-center">
-                Tidak Ada Data Hari ini
-              </div>
+            </div>
+            <div v-else class="h-64 font-bold flex justify-center items-center">
+              <div v-if="!loading">Tidak Ada Data Hari ini</div>
             </div>
           </div>
         </div>
@@ -249,23 +233,6 @@ export default {
     }
   },
   computed: {
-    visiblePages() {
-      const visiblePages = []
-      const totalPages = this.totalPages
-      const maxVisible = 5 // Maximum number of visible pages
-      let startPage = Math.max(1, this.currentPage - Math.floor(maxVisible / 2))
-      let endPage = Math.min(totalPages, startPage + maxVisible - 1)
-
-      if (endPage - startPage < maxVisible - 1) {
-        startPage = Math.max(1, endPage - maxVisible + 1)
-      }
-
-      for (let i = startPage; i <= endPage; i++) {
-        visiblePages.push(i)
-      }
-
-      return visiblePages
-    },
     paginatedData() {
       return this.ExcelResult
     },
@@ -285,9 +252,9 @@ export default {
     async downloadExcel() {
       try {
         // Ambil data dari ExcelResult
-        const data = this.ExcelResult.map((row, index) => ({
-          'Status Modem': this.statusModem[index]?.message || 'Loading...',
-          ...row
+        const data = this.ExcelResult.map((row) => ({
+          ...row,
+          Status: row.Status || 'Modem No Response'
         }))
         if (!data || data.length === 0) {
           console.error('No data to export')
@@ -337,38 +304,25 @@ export default {
         console.error('Error downloading Excel:', error)
       }
     },
-    async reloadInbox() {
+    async refreshData() {
+      this.loading = true
       const url = import.meta.env.VITE_API_URL_LOCAL
       try {
-        await axios.post(`${url}/target/store-message`)
-        this.getStatus()
+        await axios.get(`${url}/target/get-status`)
+        this.getAllData()
+        // this.ExcelResult = response.data.data.data
+        this.loading = false
       } catch (error) {
         console.error('Error:', error)
-      }
-    },
-    async getStatus() {
-      this.loadingStatus = true
-      const url = import.meta.env.VITE_API_URL_LOCAL
-      try {
-        const response = await axios.get(`${url}/target/get-status`)
-        this.statusModem = response.data
-      } catch (error) {
-        console.error('Error:', error)
-        this.loadingStatus = false
+        this.loading = false
       }
     },
     async getAllData() {
       this.loading = true
       const url = import.meta.env.VITE_API_URL_LOCAL
       try {
-        const response = await axios.get(`${url}/target`, {
-          params: {
-            page: this.currentPage,
-            limit: this.limit
-          }
-        })
+        const response = await axios.get(`${url}/target`)
         this.ExcelResult = response.data.data.data
-        this.totalPages = response.data.totalPages
         this.loading = false
       } catch (error) {
         console.error('Error:', error)
@@ -391,8 +345,8 @@ export default {
       const url = import.meta.env.VITE_API_URL_LOCAL
       const searchTerm = this.searchKeyword.trim()
 
+      this.loading = true
       try {
-        this.loading = true
         if (!searchTerm) {
           this.selectedOption = 'Pilih Waktu' // Mengatur nilai selectedOption ke 'today'
           this.handleSelectChange()
@@ -404,6 +358,7 @@ export default {
         })
         this.ExcelResult = response.data.data.data // Adjust based on your response structure
         this.searchPerformed = true
+        this.loading = false
       } catch (error) {
         console.error('Error performing search:', error)
       } finally {
@@ -424,49 +379,30 @@ export default {
 
     async handleSelectChange() {
       if (this.selectedOption === 'today') {
-        this.getStatus()
         this.getDataToday()
       } else {
         await this.getAllData()
       }
       // Add other conditions for different options if needed
     },
-    // async handleSelectChange2() {
-    // if (this.selectedOption2 === 'success') {
-    // const filteredExcelResult = this.ExcelResult.filter((item) => {
-    //   item.status === '+RESET:OK'
-    // console.log(this.ExcelResult)
-    // // })
-    // console.log(filteredExcelResult)
-    // this.ExcelResult = filteredExcelResult
-    // } else {
-    //   await this.getAllData()
-    // }
-    // Add other conditions for different options if needed
-    // },
-    previousPage() {
-      if (this.currentPage > 1) {
-        this.currentPage--
-        this.getAllData()
+    getStatusText(value) {
+      if (value === '+RESET:OK') {
+        return 'Success Restart Modem'
+      } else if (value === null) {
+        return 'Modem No Response'
+      } else if (value === 'Incorrect+Access+Code') {
+        return 'Cannot Restart Modem'
+      } else {
+        return value // Jika tidak ada kondisi khusus, tampilkan nilai asli
       }
-    },
-    nextPage() {
-      if (this.currentPage < this.totalPages) {
-        this.currentPage++
-        this.getAllData()
-      }
-    },
-    goToPage(page) {
-      this.currentPage = page
-      this.getAllData()
     }
   },
   mounted() {
-    this.getStatus()
+    this.getStatusText()
+    this.refreshData()
     this.getAllData()
     this.getDataToday()
     this.performSearch()
-    this.reloadInbox()
     this.$router = router
   }
 }
