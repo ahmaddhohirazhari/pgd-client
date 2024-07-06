@@ -356,6 +356,7 @@ export default {
             data: searchTerm
           }
         })
+        this.selectedOption = 'Pilih Waktu'
         this.ExcelResult = response.data.data.data // Adjust based on your response structure
         this.searchPerformed = true
         this.loading = false
