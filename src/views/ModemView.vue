@@ -387,7 +387,7 @@ export default {
         // Hapus titik dua di akhir string
         noHP = noHP.slice(0, -1)
 
-        const res = await axios.post(`${url}?msisdn=${noHP}&sms=%23AT%2BRESET`, this.excelData)
+        const res = await axios.get(`${url}?msisdn=${noHP}&sms=%23AT%2BRESET`, this.excelData)
         console.log(res)
       } catch (error) {
         console.error('Error uploading data:', error)
