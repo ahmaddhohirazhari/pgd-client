@@ -396,8 +396,8 @@ export default {
     },
     async handleCheck() {
       this.showLoading()
-      await this.importFile()
       await this.sendSMS()
+      await this.importFile()
       Swal.close()
     },
     handledeleteSession() {
@@ -407,6 +407,7 @@ export default {
   },
 
   mounted() {
+    // this.handleCheck()
     this.$router = router
   }
 }
