@@ -2,7 +2,7 @@
   <NavbarMenu />
   <SidebarMenu />
   <div class="flex justify-between flex-col gap-[130px] p-4 sm:ml-64">
-    <div class="container p-2">
+    <div v-if="!showpopup" class="container p-2">
       <div class="h-screen justifyMobile container flex flex-col justify-start mt-3 items-center">
         <!-- Tabel Produk -->
         <div class="container">
@@ -206,6 +206,7 @@
 
 <script>
 import axios from 'axios'
+import Swal from 'sweetalert2'
 import router from '@/router'
 import SidebarMenu from '../components/SidebarMenu.vue'
 import NavbarMenu from '../components/NavbarMenu.vue'
@@ -229,6 +230,7 @@ export default {
       searchPerformed: false,
       debounceTimer: null,
       loading: false,
+      showpopup: false,
       loadingStatus: false
     }
   },
@@ -396,14 +398,38 @@ export default {
       } else {
         return value // Jika tidak ada kondisi khusus, tampilkan nilai asli
       }
+    },
+    ShowLoadingTimer() {
+      this.showpopup = true
+      let timerInterval
+      Swal.fire({
+        title: 'Tunggu sebentar...',
+        html: '<div class="spinner-border" role="status"></div> Sedang mengambil pesan dari modem...',
+        timer: 10000,
+        timerProgressBar: true,
+        didOpen: () => {
+          Swal.showLoading()
+          const timer = Swal.getPopup().querySelector('b')
+          timerInterval = setInterval(() => {
+            timer.textContent = `${Swal.getTimerLeft()}`
+          }, 100)
+        },
+        willClose: () => {
+          clearInterval(timerInterval)
+        }
+      }).then(() => {
+        this.showpopup = false
+      })
     }
   },
   mounted() {
+    this.ShowLoadingTimer()
     this.getStatusText()
     this.refreshData()
     this.getAllData()
     this.getDataToday()
     this.performSearch()
+
     this.$router = router
   }
 }
