@@ -5,80 +5,97 @@
         class="flex justify-center items-center w-3/4 border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 relative overflow-x-auto sm:rounded-lg"
       >
         <div class="w-3/4 p-4 bg-white dark:bg-gray-800 dark:border-gray-700">
-          <form class="space-y-6" @submit.prevent="createProducts()">
-            <h5 class="text-xl font-medium text-gray-900 dark:text-white">Crete New Product</h5>
+          <form class="space-y-6" @submit.prevent="createCustomer()">
+            <h5 class="text-xl font-medium text-gray-900 dark:text-white">Crete New Customer</h5>
             <div>
-              <label
-                for="productName"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Product Name</label
+              <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >Name</label
               >
               <input
                 type="text"
-                name="productName"
-                id="productName"
-                v-model="productName"
+                name="name"
+                id="name"
+                v-model="name"
+                @change="handleName"
                 @input="checkInput"
-                @change="handleProductName"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                 required
               />
             </div>
             <div>
               <label
-                for="productCategory"
+                for="email"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Category</label
+                >Email</label
               >
               <input
-                type="text"
-                name="productCategory"
-                id="productCategory"
-                v-model="productCategory"
+                type="email"
+                name="email"
+                id="email"
+                v-model="email"
+                @change="handleEmail"
                 @input="checkInput"
-                @change="handleproductCategory"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                 required
               />
             </div>
             <div>
               <label
-                for="productPrice"
+                for="phone"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Price</label
+                >Phone</label
               >
               <input
-                type="text"
-                name="productPrice"
-                id="productPrice"
-                :value="`${productPrice}`"
+                type="phone"
+                name="phone"
+                id="phone"
+                v-model="phone"
+                @change="handlePhone"
                 @input="checkInput"
-                @change="handleproductPrice"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                 required
               />
             </div>
             <div>
               <label
-                for="productName"
+                for="address"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Stock</label
+                >Address</label
               >
               <input
                 type="text"
-                name="productStok"
-                id="productStok"
-                v-model="productStock"
+                name="address"
+                id="address"
+                v-model="address"
+                @change="handleAddress"
                 @input="checkInput"
-                @change="handleproductStok"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                 required
               />
             </div>
-            <div class="flex justify-between">
+            <div>
+              <label
+                for="birth Date"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >Birth Date</label
+              >
+              <input
+                type="date"
+                name="birth_date"
+                id="birth_date"
+                v-model="birth_date"
+                @change="handleBirthDate"
+                @input="checkInput"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                required
+              />
+            </div>
+
+            <div class="flex mt-[150px] justify-between">
               <button
                 type="button"
-                @click="toProductView"
+                :disabled="isInputEmpty"
+                @click="toCustomerView"
                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
                 <div class="flex gap-2 justify-start items-center">
@@ -105,7 +122,10 @@
                 type="submit"
                 id="saveButton"
                 :disabled="isButtonDisabled"
-                :class="{ 'bg-gray-400 cursor-not-allowed  hover:bg-gray-400 focus:ring-4 focus:outline-none focus:ring-gray-300': isButtonDisabled }"
+                :class="{
+                  'bg-gray-400 cursor-not-allowed  hover:bg-gray-400 focus:ring-4 focus:outline-none focus:ring-gray-300':
+                    isButtonDisabled
+                }"
                 class="w-1/3 text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
               >
                 <div v-if="loading" role="status" class="flex justify-center items-center gap-2">
@@ -141,77 +161,93 @@
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import router from '@/router'
+import { format } from 'date-fns'
 
 export default {
   data() {
     return {
-      productName: '',
-      productCategory: '',
-      productStok: '',
-      productPrice: '',
+      name: '',
+      email: '',
+      phone: '',
+      address: '',
+      birth_date: '',
       loading: false,
       updateSuccess: false
     }
   },
 
   methods: {
-    createProducts() {
+    createCustomer() {
       const body = {
-        productName: this.productName,
-        productCategory: this.productCategory,
-        productPrice: this.productPrice,
-        productStock: this.productStock
+        name: this.name,
+        email: this.email,
+        phone: this.phone,
+        address: this.address,
+        birth_date: format(new Date(this.birth_date), "yyyy-MM-dd'T'00:00:00'Z'"),
+        password: this.password
       }
       this.loading = true
+      const url = import.meta.env.VITE_API_URL_LOCAL
+      let token = localStorage.getItem('token')
+      if (!token) {
+        console.error('Token tidak ditemukan di localStorage')
+        return
+      }
+      token = token.replace(/['"]+/g, '')
+
       axios
-        .post(`https://dummyjson.com/products/add`, body, {
+        .post(`${url}/customers`, body, {
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
           }
         })
         .then((res) => {
+          console.log(res)
           this.loading = false
           Swal.fire({
             position: 'center',
             icon: 'success',
-            title: `Success Create New Product`,
-            html: `<strong>Product ID :</strong><i>${res.data.id}</i> <br/><strong>Product Name :</strong><i>${this.productName}</i><br/><button class="button bg-blue-500 rounded p-4 my-3 text-white" >Back to Home</button>`,
-            showConfirmButton: false
+            title: `Success Create New User`,
+            showConfirmButton: true,
+            timer: 2000
           })
+          setTimeout(() => {
+            router.push('/customer')
+          }, 2000)
         })
         .catch((err) => {
+          this.loading = false
           console.log(err)
         })
     },
-    handleProductName(event) {
-      this.productName = event.target.value
+    handleuserName(event) {
+      this.name = event.target.value
     },
-    handleproductCategory(event) {
-      this.productCategory = event.target.value
-    },
-    handleproductStok(event) {
-      this.productStok = event.target.value
-    },
-    handleproductPrice(event) {
-      this.productPrice = event.target.value
+    handleuserPhone(event) {
+      this.phone = event.target.value
     },
 
-    toProductView() {
-      router.push('/product')
+    handleuserAddress(event) {
+      this.address = event.target.value
     },
-    checkInput() {}
+    handleuserBirthDate(event) {
+      this.birth_date = event.target.value
+    },
+
+    handleEmail(event) {
+      this.email = event.target.value
+    },
+    checkInput() {},
+    toCustomerView() {
+      router.push('/customer')
+    }
   },
   computed: {
     isButtonDisabled() {
-      return !(
-        this.productName.length > 0 &&
-        this.productCategory.length > 0 &&
-        this.productStok.length > 0 &&
-        this.productPrice.length > 0
-      )
+      return !(this.name.length > 0 && this.email.length > 0)
     }
   },
-
   mounted() {
     this.$router = router
   }

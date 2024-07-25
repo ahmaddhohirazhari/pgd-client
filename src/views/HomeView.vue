@@ -6,64 +6,22 @@
     <!-- <router-view class="mt-[150px]" /> -->
     <div class="pe-11">
       <div class="flex justify-between">
-        <div class="flex justify-end items-center mt-5 me-3">
-          <img
-            src="@/assets/Logo-ITT-PLN.png"
-            alt="Description of the image"
-            class="w-[180px] bg-white"
-          />
-        </div>
         <div class="flex justify-center items-center my-5">
-          <p class="font-bold text-black-500 text-xl bg-white p-2 rounded-sm">Analytics Dashboard</p>
+          <p class="font-bold text-black-500 text-xl bg-green-500 p-2 text-white rounded-lg">
+            Analytics Dashboard
+          </p>
         </div>
         <div class="my-5">
-          <button @click="refreshPage" class="btn bg-teal-500 p-2 rounded text-zinc-300 font-bold">
+          <button
+            @click="refreshPage"
+            class="btn shadow-md bg-green-500 p-2 rounded text-zinc-300 font-bold"
+          >
             Refresh Data
           </button>
         </div>
       </div>
       <div class="p-11 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-5">
-        <div class="grid grid-cols-3 gap-4 mb-4">
-          <div
-            class="flex py-5 items-center flex-col justify-center h-24 border rounded bg-gray-50 dark:bg-gray-800"
-            style="height: 200px; border-color: #f7b924"
-          >
-            <p class="text-sm font-bold text-grey-700">Total Offline Bulan ini</p>
-            <div class="flex">
-              <img src="/icon-laptop.png" class="h-[150px]" alt="FlowBite Logo" />
-              <div class="flex flex-col justify-center items-center">
-                <p
-                  class="text-black-900 dark:text-black-500"
-                  style="font-size: 40px; font-weight: 800; color: #f7b924"
-                >
-                  {{ totalOflineMonthly }}
-                </p>
-                <p style="font-size: 20px; font-weight: 600; color: #f7b924">Modem</p>
-              </div>
-            </div>
-          </div>
-          <div class="flex items-center justify-center h-24 rounded bg-white-50">
-            <p class="text-2xl text-black-400 dark:text-black-500"></p>
-          </div>
-          <div
-            class="flex py-5 items-center flex-col justify-center h-24 border rounded bg-gray-50 dark:bg-gray-800"
-            style="height: 200px; border-color: #16aaff"
-          >
-            <p class="text-sm font-bold text-grey-700">Restart Modem Hari ini</p>
-            <div class="flex">
-              <img src="/icon-laptop.png" class="h-[150px]" alt="FlowBite Logo" />
-              <div class="flex flex-col justify-center items-center">
-                <p
-                  class="text-black-900 dark:text-black-500"
-                  style="font-size: 40px; font-weight: 800; color: #16aaff"
-                >
-                  {{ totalOflineDaily }}
-                </p>
-                <p style="font-size: 20px; font-weight: 600; color: #16aaff">Modem</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <div class="grid grid-cols-3 gap-4 mb-4"></div>
 
         <div class="grid grid-cols-2 gap-4 mt-10">
           <div
@@ -71,32 +29,10 @@
             style="border-color: #d35a51"
           >
             <div>
-              <p class="text-sm font-bold text-grey-700">Restart Modem Hari ini</p>
-            </div>
-            <div class="single-chart">
-              <svg viewBox="0 0 36 36" class="circular-chart red">
-                <path
-                  class="circle-bg"
-                  d="M18 2.0845
-          a 15.9155 15.9155 0 0 1 0 31.831
-          a 15.9155 15.9155 0 0 1 0 -31.831"
-                />
-                <path
-                  class="circle"
-                  :stroke-dasharray="`${((totalOflineDaily - totalSuccessDaily) / totalOflineDaily) * 100}, 100`"
-                  d="M18 2.0845
-          a 15.9155 15.9155 0 0 1 0 31.831
-          a 15.9155 15.9155 0 0 1 0 -31.831"
-                />
-                <text x="18" y="20.35" class="percentage">
-                  {{ totalOflineDaily !== 0 ? totalFailedPercent : 0 }}%
-                </text>
-              </svg>
+              <p class="text-sm font-bold text-grey-700">Total Penjualan Barang</p>
             </div>
             <div class="flex justify-center items-center">
-              <p class="text-2xl fw-boldz" style="color: #d35a51">
-                {{ totalOflineDaily - totalSuccessDaily }} Modem Failed
-              </p>
+              <p class="text-2xl fw-boldz" style="color: #d35a51">0 Barang</p>
             </div>
           </div>
           <div
@@ -104,34 +40,14 @@
             style="border-color: #4cc790"
           >
             <div>
-              <p class="text-sm font-bold text-grey-700">Restart Modem Hari ini</p>
-            </div>
-            <div class="single-chart">
-              <svg viewBox="0 0 36 36" class="circular-chart green">
-                <path
-                  class="circle-bg"
-                  d="M18 2.0845
-          a 15.9155 15.9155 0 0 1 0 31.831
-          a 15.9155 15.9155 0 0 1 0 -31.831"
-                />
-                <path
-                  class="circle"
-                  :stroke-dasharray="`${(totalSuccessDaily / totalOflineDaily) * 100}, 100`"
-                  d="M18 2.0845
-          a 15.9155 15.9155 0 0 1 0 31.831
-          a 15.9155 15.9155 0 0 1 0 -31.831"
-                />
-                <text x="18" y="20.35" class="percentage">
-                  {{ totalOflineDaily !== 0 ? totalSuccessPercent : 0 }}%
-                </text>
-              </svg>
+              <p class="text-sm font-bold text-grey-700">Jumlah Customer</p>
             </div>
             <div class="flex justify-center items-center">
               <p
                 class="text-2xl text-green-500 dark:text-green-500 fw-boldz"
                 style="color: #4cc790"
               >
-                {{ totalSuccessDaily }} Modem Success
+                {{ totalSuccessDaily }} Customer
               </p>
             </div>
           </div>

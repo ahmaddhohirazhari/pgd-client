@@ -1,21 +1,16 @@
 <template>
   <aside
     id="logo-sidebar"
-    class="fixed top-0 left-0 z-40 w-64 h-screen pt-[75px] transition-transform -translate-x-full bg-black border-r border-gray-200 sm:translate-x-0"
+    class="fixed top-0 left-0 z-40 w-64 h-screen pt-[75px] transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 shadow-lg"
     aria-label="Sidebar"
   >
-    <div class="h-full px-3 pb-4 overflow-y-auto bg-black">
-      <div class="flex ms-[10px] text-white justify-start items-center">
-        <h2>Main Menu</h2>
-      </div>
-      <hr class="h-px my-3 bg-gray-200 border-0" />
-
-      <ul class="space-y-2 font-medium">
+    <div class="h-full px-3 pb-4 overflow-y-auto bg-white">
+      <ul class="space-y-2 font-medium text-green-600">
         <li>
           <router-link
             to="/"
-            :class="{ 'bg-blue-500 text-white': $route.path === '/', 'hover:bg-blue': true }"
-            class="flex items-center p-2 text-white rounded-lg hover:bg-gray-100 hover:text-black black group"
+            :class="{ 'bg-green-500 text-white': $route.path === '/', 'hover:bg-blue': true }"
+            class="flex items-center p-2 rounded-lg hover:bg-green-500 hover:text-white black group"
           >
             <svg
               height="24px"
@@ -40,295 +35,84 @@
             <span class="ms-3">Dashboard</span>
           </router-link>
         </li>
+
         <li>
-          <button
-            type="button"
+          <router-link
+            to="/customer"
             :class="{
-              'bg-blue-500 text-white': $route.path === '/result' || $route.path === '/modem'
+              'bg-green-500 text-white': $route.path === '/customer',
+              'hover:bg-blue': true
             }"
-            class="flex items-center w-full p-2 text-base text-white hover:bg-gray-100 hover:text-black text-whitetransition duration-75 rounded-lg group"
-            aria-controls="dropdown-example"
-            data-collapse-toggle="dropdown-example"
+            class="flex items-center p-2 rounded-lg hover:bg-green-500 hover:text-white black group"
           >
             <svg
-              fill="#a1a1a1"
-              version="1.1"
-              id="Capa_1"
-              xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink"
-              width="25px"
+              fill="#bfbfbf"
+              width="20px"
               height="35px"
-              viewBox="0 0 924.14 924.14"
-              xml:space="preserve"
-              transform="rotate(90)"
-              stroke="#a1a1a1"
+              viewBox="0 0 32.00 32.00"
+              id="customer"
+              xmlns="http://www.w3.org/2000/svg"
+              stroke="#bfbfbf"
+              transform="rotate(0)"
+              stroke-width="0.00032"
+              class="me-1"
             >
               <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
               <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
               <g id="SVGRepo_iconCarrier">
-                <g>
-                  <path
-                    d="M350.27,388.938c0.399-50.8-41.5-93.8-92.2-94.8c-52.9-1.101-96.1,41.5-96.1,94.1c0,41.801,27.4,76.801,65,89.101v35.8 c0,22,10.3,42.7,27.9,55.9l181.2,136.5c-46.5,13.399-80.5,56.3-80.5,107.1c0,61.6,49.9,111.5,111.5,111.5 c61.6,0,111.5-49.9,111.5-111.5c0-51.3-34.699-94.5-81.9-107.5v-52.6l166.4-115.601c18.801-13.1,30.1-34.6,30.1-57.5v-49.5h19 c27.602,0,50-22.399,50-50v-81.2c0-27.6-22.398-50-50-50H615.97c-27.6,0-50,22.4-50,50v81.2c0,27.601,22.4,50,50,50h19v55.7 l-138.301,96v-366.3h48.9c35,0,56.6-38.301,38.5-68.301L509.87,24.138c-19.301-32-65.6-32.2-85.3-0.5l-76.2,123 c-18.6,30,3,68.7,38.3,68.7h51.9v419.1l-153.3-115.399v-41.7C322.669,465.138,349.97,430.338,350.27,388.938z"
-                  ></path>
-                </g>
+                <title></title>
+                <path
+                  d="M22.56,16.53a9.95,9.95,0,0,1-13.12,0A15,15,0,0,0,1,30a1,1,0,0,0,1,1H30a1,1,0,0,0,1-1A15,15,0,0,0,22.56,16.53Z"
+                ></path>
+                <circle cx="16" cy="9" r="8"></circle>
               </g>
             </svg>
-            <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Modem</span>
-            <svg
-              class="w-3 h-3"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 10 6"
-            >
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="m1 1 4 4 4-4"
-              />
-            </svg>
-          </button>
-          <ul id="dropdown-example" class="hidden py-2 space-y-2">
-            <li>
-              <router-link
-                to="/modem"
-                :class="{
-                  'bg-gray-100 text-black': $route.path === '/modem',
-                  'text-white': $route.path !== '/modem'
-                }"
-                class="flex gap-3 justify-start items-center w-full p-2 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 hover:text-black"
-              >
-                <div v-if="$route.path === '/modem'">
-                  <svg
-                    fill="#000000"
-                    height="15px"
-                    width="15px"
-                    version="1.1"
-                    id="Layer_1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink"
-                    viewBox="0 0 470 470"
-                    xml:space="preserve"
-                    stroke="#000000"
-                  >
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g
-                      id="SVGRepo_tracerCarrier"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    ></g>
-                    <g id="SVGRepo_iconCarrier">
-                      <g>
-                        <g>
-                          <g>
-                            <circle cx="85" cy="337" r="10"></circle>
-                            <circle cx="135" cy="337" r="10"></circle>
-                            <circle cx="185" cy="337" r="10"></circle>
-                            <circle cx="235" cy="337" r="10"></circle>
-                            <circle cx="285" cy="337" r="10"></circle>
-                            <circle cx="335" cy="337" r="10"></circle>
-                            <circle cx="385" cy="337" r="10"></circle>
-                            <path
-                              d="M462.5,279.5h-73.655l40.734-231.016c2.633-14.934-7.374-29.225-22.307-31.857c-14.93-2.64-29.224,7.374-31.858,22.307 l-38.221,216.765c-0.719,4.079,2.005,7.97,6.084,8.688c4.075,0.723,7.969-2.005,8.688-6.083l38.221-216.765 c1.197-6.789,7.692-11.336,14.481-10.141c6.788,1.197,11.336,7.693,10.139,14.48L373.613,279.5H222.5V42 c0-6.893,5.607-12.5,12.5-12.5s12.5,5.607,12.5,12.5v215c0,4.143,3.358,7.5,7.5,7.5c4.142,0,7.5-3.357,7.5-7.5V42 c0-15.163-12.336-27.5-27.5-27.5S207.5,26.837,207.5,42v237.5H96.387L55.193,45.879c-1.197-6.787,3.352-13.283,10.139-14.48 c6.792-1.194,13.285,3.353,14.481,10.141l38.221,216.765c0.719,4.079,4.611,6.807,8.688,6.083 c4.079-0.719,6.803-4.609,6.084-8.688L94.586,38.934c-2.633-14.933-16.923-24.945-31.858-22.307 c-14.933,2.633-24.94,16.924-22.307,31.857L81.155,279.5H7.5c-4.142,0-7.5,3.357-7.5,7.5v91c0,23.639,17.36,43.295,40,46.902V448 c0,4.143,3.358,7.5,7.5,7.5h70c4.142,0,7.5-3.357,7.5-7.5v-22.5h220V448c0,4.143,3.358,7.5,7.5,7.5h70c4.142,0,7.5-3.357,7.5-7.5 v-23.098c22.64-3.607,40-23.263,40-46.902v-91C470,282.857,466.642,279.5,462.5,279.5z M110,440.5H55v-15h55V440.5z M415,440.5 h-55v-15h55V440.5z M455,378c0,17.921-14.58,32.5-32.5,32.5h-375C29.58,410.5,15,395.921,15,378v-83.5h440V378z"
-                            ></path>
-                          </g>
-                        </g>
-                      </g>
-                    </g>
-                  </svg>
-                </div>
-                <div v-else>
-                  <svg
-                    fill="#bfbfbf"
-                    height="15px"
-                    width="15px"
-                    version="1.1"
-                    id="Layer_1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink"
-                    viewBox="0 0 470 470"
-                    xml:space="preserve"
-                    stroke="#bfbfbf"
-                  >
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g
-                      id="SVGRepo_tracerCarrier"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    ></g>
-                    <g id="SVGRepo_iconCarrier">
-                      <g>
-                        <g>
-                          <g>
-                            <circle cx="85" cy="337" r="10"></circle>
-                            <circle cx="135" cy="337" r="10"></circle>
-                            <circle cx="185" cy="337" r="10"></circle>
-                            <circle cx="235" cy="337" r="10"></circle>
-                            <circle cx="285" cy="337" r="10"></circle>
-                            <circle cx="335" cy="337" r="10"></circle>
-                            <circle cx="385" cy="337" r="10"></circle>
-                            <path
-                              d="M462.5,279.5h-73.655l40.734-231.016c2.633-14.934-7.374-29.225-22.307-31.857c-14.93-2.64-29.224,7.374-31.858,22.307 l-38.221,216.765c-0.719,4.079,2.005,7.97,6.084,8.688c4.075,0.723,7.969-2.005,8.688-6.083l38.221-216.765 c1.197-6.789,7.692-11.336,14.481-10.141c6.788,1.197,11.336,7.693,10.139,14.48L373.613,279.5H222.5V42 c0-6.893,5.607-12.5,12.5-12.5s12.5,5.607,12.5,12.5v215c0,4.143,3.358,7.5,7.5,7.5c4.142,0,7.5-3.357,7.5-7.5V42 c0-15.163-12.336-27.5-27.5-27.5S207.5,26.837,207.5,42v237.5H96.387L55.193,45.879c-1.197-6.787,3.352-13.283,10.139-14.48 c6.792-1.194,13.285,3.353,14.481,10.141l38.221,216.765c0.719,4.079,4.611,6.807,8.688,6.083 c4.079-0.719,6.803-4.609,6.084-8.688L94.586,38.934c-2.633-14.933-16.923-24.945-31.858-22.307 c-14.933,2.633-24.94,16.924-22.307,31.857L81.155,279.5H7.5c-4.142,0-7.5,3.357-7.5,7.5v91c0,23.639,17.36,43.295,40,46.902V448 c0,4.143,3.358,7.5,7.5,7.5h70c4.142,0,7.5-3.357,7.5-7.5v-22.5h220V448c0,4.143,3.358,7.5,7.5,7.5h70c4.142,0,7.5-3.357,7.5-7.5 v-23.098c22.64-3.607,40-23.263,40-46.902v-91C470,282.857,466.642,279.5,462.5,279.5z M110,440.5H55v-15h55V440.5z M415,440.5 h-55v-15h55V440.5z M455,378c0,17.921-14.58,32.5-32.5,32.5h-375C29.58,410.5,15,395.921,15,378v-83.5h440V378z"
-                            ></path>
-                          </g>
-                        </g>
-                      </g>
-                    </g>
-                  </svg>
-                </div>
-                <span> Modem Check </span>
-              </router-link>
-            </li>
-            <li>
-              <router-link
-                to="/result"
-                :class="{
-                  'bg-gray-100 text-black': $route.path === '/result',
-                  'text-white': $route.path !== '/result'
-                }"
-                class="flex gap-3 items-center w-full p-2 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 hover:text-black"
-              >
-                <div v-if="$route.path === '/result'">
-                  <svg
-                    fill="#000000"
-                    height="15px"
-                    width="15px"
-                    version="1.1"
-                    id="Layer_1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink"
-                    viewBox="0 0 512 512"
-                    xml:space="preserve"
-                    stroke="#000000"
-                  >
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g
-                      id="SVGRepo_tracerCarrier"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    ></g>
-                    <g id="SVGRepo_iconCarrier">
-                      <g>
-                        <g>
-                          <path
-                            d="M256,127.996c-7.074,0-12.8,5.726-12.8,12.8v204.8c0,7.074,5.726,12.8,12.8,12.8c7.074,0,12.8-5.726,12.8-12.8v-204.8 C268.8,133.722,263.074,127.996,256,127.996z"
-                          ></path>
-                        </g>
-                      </g>
-                      <g>
-                        <g>
-                          <path
-                            d="M508.57,442.731L278.17,43.669c-4.574-7.919-13.022-12.8-22.17-12.8s-17.596,4.881-22.17,12.8L3.43,442.731 c-4.574,7.919-4.574,17.681,0,25.6c4.574,7.919,13.022,12.8,22.17,12.8h460.8c9.148,0,17.596-4.881,22.17-12.8 S513.143,450.65,508.57,442.731z M25.605,455.522L256,56.461l230.4,399.061H25.605z"
-                          ></path>
-                        </g>
-                      </g>
-                      <g>
-                        <g><circle cx="256" cy="409.596" r="25.6"></circle></g>
-                      </g>
-                    </g>
-                  </svg>
-                </div>
-                <div v-else>
-                  <svg
-                    fill="#bfbfbf"
-                    height="15px"
-                    width="15px"
-                    version="1.1"
-                    id="Layer_1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink"
-                    viewBox="0 0 512 512"
-                    xml:space="preserve"
-                    stroke="#bfbfbf"
-                  >
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g
-                      id="SVGRepo_tracerCarrier"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    ></g>
-                    <g id="SVGRepo_iconCarrier">
-                      <g>
-                        <g>
-                          <path
-                            d="M256,127.996c-7.074,0-12.8,5.726-12.8,12.8v204.8c0,7.074,5.726,12.8,12.8,12.8c7.074,0,12.8-5.726,12.8-12.8v-204.8 C268.8,133.722,263.074,127.996,256,127.996z"
-                          ></path>
-                        </g>
-                      </g>
-                      <g>
-                        <g>
-                          <path
-                            d="M508.57,442.731L278.17,43.669c-4.574-7.919-13.022-12.8-22.17-12.8s-17.596,4.881-22.17,12.8L3.43,442.731 c-4.574,7.919-4.574,17.681,0,25.6c4.574,7.919,13.022,12.8,22.17,12.8h460.8c9.148,0,17.596-4.881,22.17-12.8 S513.143,450.65,508.57,442.731z M25.605,455.522L256,56.461l230.4,399.061H25.605z"
-                          ></path>
-                        </g>
-                      </g>
-                      <g>
-                        <g><circle cx="256" cy="409.596" r="25.6"></circle></g>
-                      </g>
-                    </g>
-                  </svg>
-                </div>
-                <span> Result </span>
-              </router-link>
-            </li>
-          </ul>
+            <span class="flex-1 ms-3 whitespace-nowrap">Management Customers</span>
+          </router-link>
         </li>
-        <div v-if="isSuperAdmin">
-          <li>
-            <router-link
-              to="/user"
-              :class="{ 'bg-blue-500  text-white': $route.path === '/user' }"
-              class="flex items-center p-2 rounded-lg text-white hover:bg-gray-100 group hover:text-black"
+        <li>
+          <router-link
+            to="/user"
+            :class="{ 'bg-green-500  text-white': $route.path === '/user' }"
+            class="flex items-center p-2 rounded-lg hover:bg-green-500 group hover:text-white"
+          >
+            <svg
+              fill="#bfbfbf"
+              width="20px"
+              height="35px"
+              viewBox="0 0 32.00 32.00"
+              id="user"
+              xmlns="http://www.w3.org/2000/svg"
+              stroke="#bfbfbf"
+              transform="rotate(0)"
+              stroke-width="0.00032"
+              class="me-1"
             >
-              <svg
-                fill="#bfbfbf"
-                width="20px"
-                height="35px"
-                viewBox="0 0 32.00 32.00"
-                id="user"
-                xmlns="http://www.w3.org/2000/svg"
-                stroke="#bfbfbf"
-                transform="rotate(0)"
-                stroke-width="0.00032"
-                class="me-1"
-              >
-                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                <g id="SVGRepo_iconCarrier">
-                  <title></title>
-                  <path
-                    d="M22.56,16.53a9.95,9.95,0,0,1-13.12,0A15,15,0,0,0,1,30a1,1,0,0,0,1,1H30a1,1,0,0,0,1-1A15,15,0,0,0,22.56,16.53Z"
-                  ></path>
-                  <circle cx="16" cy="9" r="8"></circle>
-                </g>
-              </svg>
-              <span class="flex-1 ms-3 whitespace-nowrap">Management Users</span>
-            </router-link>
-          </li>
-        </div>
+              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+              <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+              <g id="SVGRepo_iconCarrier">
+                <title></title>
+                <path
+                  d="M22.56,16.53a9.95,9.95,0,0,1-13.12,0A15,15,0,0,0,1,30a1,1,0,0,0,1,1H30a1,1,0,0,0,1-1A15,15,0,0,0,22.56,16.53Z"
+                ></path>
+                <circle cx="16" cy="9" r="8"></circle>
+              </g>
+            </svg>
+            <span class="flex-1 ms-3 whitespace-nowrap">Management Users</span>
+          </router-link>
+        </li>
       </ul>
     </div>
   </aside>
 </template>
 
 <script setup>
-import { onMounted,ref } from 'vue'
+import { onMounted } from 'vue'
 import { initFlowbite } from 'flowbite'
 
-const isSuperAdmin = ref(false)
-
-const checkRole = () => {
-  const roles = localStorage.getItem('role')
-  if(roles === '"superAdmin"'){
-    isSuperAdmin.value = true
-  }
-}
 // initialize components based on data attribute selectors
 onMounted(() => {
   initFlowbite()
-  checkRole()
 })
 </script>
 

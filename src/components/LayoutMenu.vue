@@ -4,8 +4,8 @@
     :class="{
       hidden:
         $route.path === '/user/' + $route.params.id ||
-        $route.path === '/product/' + $route.params.id ||
-        $route.path === '/product/create' ||
+        $route.path === '/customer/' + $route.params.id ||
+        $route.path === '/customer/create' ||
         $route.path === '/user/create'
     }"
   />

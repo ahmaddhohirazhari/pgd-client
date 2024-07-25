@@ -5,72 +5,61 @@
         class="flex justify-center items-center w-3/4 border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 relative overflow-x-auto sm:rounded-lg"
       >
         <div class="w-3/4 p-4 bg-white dark:bg-gray-800 dark:border-gray-700">
-          <form class="space-y-6" @submit.prevent="updateProducts">
-            <h5 class="text-xl font-medium text-gray-900 dark:text-white">Update Data</h5>
+          <form class="space-y-6" @submit.prevent="updateCustomer">
+            <h5 class="text-xl font-medium text-gray-900 dark:text-white">Update Data User</h5>
             <div>
-              <label
-                for="productName"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Product Name</label
+              <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >Name</label
               >
               <input
                 type="text"
-                name="productName"
-                id="productName"
-                :value="productName"
+                name="name"
+                id="name"
+                :value="name"
                 @input="checkInput"
-                @change="handleName"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                 required
               />
             </div>
             <div>
-              <label
-                for="productCategory"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Category</label
+              <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >Phone</label
               >
               <input
                 type="text"
-                name="productCategory"
-                id="productCategory"
-                :value="productCategory"
+                name="phone"
+                id="phone"
+                :value="phone"
                 @input="checkInput"
-                @change="handleproductCategory"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                required
+              />
+            </div>
+
+            <div>
+              <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >Address</label
+              >
+              <input
+                type="text"
+                name="address"
+                id="address"
+                :value="address"
+                @input="checkInput"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                 required
               />
             </div>
             <div>
-              <label
-                for="productPrice"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Price</label
+              <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >Birth Date</label
               >
               <input
-                type="text"
-                name="productPrice"
-                id="productPrice"
-                :value="`$${productPrice}`"
+                type="date"
+                name="birth_date"
+                id="birth_date"
+                :value="birth_date"
                 @input="checkInput"
-                @change="handleproductPrice"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                required
-              />
-            </div>
-            <div>
-              <label
-                for="productName"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Stock</label
-              >
-              <input
-                type="text"
-                name="productStock"
-                id="productStock"
-                :value="productStock"
-                @input="checkInput"
-                @change="handleproductStock"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                 required
               />
@@ -78,7 +67,7 @@
             <div class="flex justify-between">
               <button
                 type="button"
-                @click="toProductView"
+                @click="toCustomerView"
                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
                 <div class="flex gap-2 justify-start items-center">
@@ -105,10 +94,6 @@
                 type="submit"
                 id="saveButton"
                 :disabled="isButtonDisabled"
-                :class="{
-                  'bg-gray-400 cursor-not-allowed  hover:bg-gray-400 focus:ring-4 focus:outline-none focus:ring-gray-300':
-                    isButtonDisabled
-                }"
                 class="w-1/3 text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
               >
                 <div v-if="loading" role="status" class="flex justify-center items-center gap-2">
@@ -144,50 +129,75 @@
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import router from '@/router'
+import { format } from 'date-fns'
 
 export default {
   data() {
     return {
-      editedProductName: '',
       body: {},
-      productID: '',
-      productName: '',
-      productCategory: '',
-      productPrice: '',
-      productStock: '',
+      name: '',
+      phone: '',
+      address: '',
+      birth_date: '',
       loading: false,
-      updateSuccess: false
+      updateSuccess: false,
+      isButtonDisabled: false
     }
   },
 
   methods: {
-    fetchProducts() {
+    fetchCustomer() {
+      const url = import.meta.env.VITE_API_URL_LOCAL
+
+      let token = localStorage.getItem('token')
+      if (!token) {
+        console.error('Token tidak ditemukan di localStorage')
+        return
+      }
+      token = token.replace(/['"]+/g, '')
+
       axios
-        .get(`https://dummyjson.com/products/${this.$route.params.id}`)
+        .get(`${url}/customers/${this.$route.params.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
         .then((res) => {
-          this.productID = res.data.id
-          this.productName = res.data.brand
-          this.productCategory = res.data.category
-          this.productPrice = res.data.price
-          this.productStock = res.data.stock
+          this.id = res.data.data.id
+          this.name = res.data.data.name
+          this.phone = res.data.data.phone
+          this.address = res.data.data.address
+          this.birth_date = res.data.data.birth_date
         })
         .catch((err) => {
           console.log(err)
         })
     },
 
-    updateProducts() {
+    updateCustomer() {
       const body = {
-        productName: this.productName,
-        productCategory: this.productCategory,
-        productPrice: this.productPrice,
-        productStock: this.productStock
+        name: this.name,
+        phone: this.phone,
+        address: this.address,
+        birth_date: format(new Date(this.birth_date), "yyyy-MM-dd'T'00:00:00'Z'")
       }
+
+      const url = import.meta.env.VITE_API_URL_LOCAL
+
+      let token = localStorage.getItem('token')
+      if (!token) {
+        console.error('Token tidak ditemukan di localStorage')
+        return
+      }
+      token = token.replace(/['"]+/g, '')
+      console.log(token)
+
       this.loading = true
       axios
-        .put(`https://dummyjson.com/products/${this.$route.params.id}`, body, {
+        .patch(`${url}/customers/${this.$route.params.id}`, body, {
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
           }
         })
         .then(() => {
@@ -195,57 +205,29 @@ export default {
           Swal.fire({
             position: 'center',
             icon: 'success',
-            title: `Success Update <br> Product with ID : ${this.productID}`,
+            title: `Success Update <br> Customers with ID : ${this.id}`,
             showConfirmButton: false,
             timer: 2000
           })
           setTimeout(() => {
-            router.push('/product')
+            router.push('/customer')
           }, 2000)
         })
         .catch((err) => {
+          this.loading = false
           console.log(err)
         })
     },
-    toProductView() {
-      router.push('/product')
-    },
-
-    handleName(event) {
-      this.productName = event.target.value
-    },
-    handleproductCategory(event) {
-      this.productCategory = event.target.value
-    },
-    handleproductPrice(event) {
-      this.productPrice = event.target.value
-    },
-    handleproductStock(event) {
-      this.productStock = event.target.value
-    },  
     checkInput() {
-    // Set tombol disable jika ada input yang kosong
-    this.isButtonDisabled = (
-      this.productName.length > 0 &&
-      this.productCategory.length > 0 &&
-      this.productStock.length > 0 &&
-      this.productPrice.length > 0
-    );
-  },
-  },
-  computed: {
-    isButtonDisabled() {
-      return !(
-        this.productName.length > 0 &&
-        this.productCategory.length > 0 &&
-        this.productStock.length > 0 &&
-        this.productPrice.length > 0
-      )
+      this.isButtonDisabled = this.name.trim() === '' || this.phone.trim() === ''
+    },
+    toCustomerView() {
+      router.push('/customer')
     }
   },
 
   mounted() {
-    this.fetchProducts()
+    this.fetchCustomer()
     this.$router = router
   }
 }

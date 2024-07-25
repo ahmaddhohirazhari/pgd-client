@@ -1,6 +1,6 @@
 <template>
   <div
-    class="font-[sans-serif] bg-gradient-to-r from-purple-900 via-purple-800 to-purple-600 text-[#333]"
+    class="font-[sans-serif] bg-gradient-to-r from-green-900 via-green-700 to-green-500 text-[#333]"
   >
     <div class="min-h-screen flex fle-col items-center justify-center lg:p-6 p-4">
       <div class="grid md:grid-cols-2 items-center gap-10 max-w-6xl w-full">
@@ -21,12 +21,12 @@
             <h3 class="text-3xl font-extrabold">Sign in</h3>
           </div>
           <div>
-            <label class="text-sm mb-2 block">Email Address</label>
+            <label class="text-sm mb-2 block">Username</label>
             <div class="relative flex items-center">
               <input
-                name="email"
-                type="email"
-                v-model="form.email"
+                name="username"
+                type="username"
+                v-model="form.username"
                 required
                 class="w-full text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600"
                 placeholder="Enter Your Email"
@@ -167,7 +167,7 @@
           <div class="mt-4 text-right">
             <a
               href="jajvascript:void(0);"
-              class="text-blue-600 text-sm font-semibold hover:underline"
+              class="text-green-600 text-sm font-semibold hover:underline"
             >
               Forgot your password?
             </a>
@@ -175,7 +175,7 @@
           <div class="mt-10">
             <button
               type="submit"
-              class="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
+              class="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white bg-green-500 hover:bg-green-600 focus:outline-none"
             >
               <p v-if="!isLoading">Log in</p>
               <div v-else>
@@ -205,19 +205,20 @@ export default {
     }
 
     let form = reactive({
-      email: '',
+      username: '',
       password: ''
     })
     const handleLogin = async () => {
       isLoading.value = true // Mengatur isLoading menjadi true sebelum permintaan dikirim
       const url = import.meta.env.VITE_API_URL_LOCAL
       try {
-        const res = await axios.post(`${url}/auth/login`, form)
+        const res = await axios.post(`${url}/login`, form)
 
         // Simpan data payload ke local storage
         localStorage.setItem('userData', JSON.stringify(res.data))
-        localStorage.setItem('token', JSON.stringify(res.data.data.token))
-        localStorage.setItem('role', JSON.stringify(res.data.data.payload.role))
+        localStorage.setItem('token', JSON.stringify(res.data?.data?.accessToken))
+
+        // localStorage.setItem('role', JSON.stringify(res.data.data.payload.role))
         const loginTimestamp = new Date().getTime()
         localStorage.setItem('loginTimestamp', loginTimestamp)
 
@@ -251,7 +252,6 @@ export default {
     const clearLocalStorage = () => {
       localStorage.removeItem('userData')
       localStorage.removeItem('token')
-      localStorage.removeItem('role')
       localStorage.removeItem('loginTimestamp')
     }
     const checkLoginExpiry = () => {

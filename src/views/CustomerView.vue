@@ -29,15 +29,15 @@
               </div>
             </div>
           </div>
-          <!-- Tabel User -->
+          <!-- Tabel customer -->
           <div v-else>
             <div class="my-5">
               <button
                 type="button"
-                @click="$router.push(`/user/create`)"
-                class="mt-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                @click="$router.push(`/customer/create`)"
+                class="mt-2 text-white bg-green-500 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
               >
-                Add New User
+                Add New Customer
               </button>
             </div>
             <div class="shadow-md sm:rounded-lg p-5 mb-5 border">
@@ -59,7 +59,7 @@
                 </thead>
                 <tbody>
                   <tr
-                    v-for="(user, index) in users"
+                    v-for="(customer, index) in customers"
                     :key="index"
                     class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
                   >
@@ -69,33 +69,33 @@
                       scope="row"
                       class="px-2 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                     >
-                      {{ user.name }}
+                      {{ customer.name }}
                     </td>
-                    <td class="px-2 py-1">{{ user.email }}</td>
-                    <td class="px-2 py-1">{{ user.phone }}</td>
+                    <td class="px-2 py-1">{{ customer.email }}</td>
+                    <td class="px-2 py-1">{{ customer.phone }}</td>
                     <td class="px-2 py-1">
-                      {{ formatDate(user.birth_date) }}
+                      {{ formatDate(customer.birth_date) }}
                     </td>
-                    <td class="px-6 py-1">{{ user.address }}</td>
+                    <td class="px-6 py-1">{{ customer.address }}</td>
                     <td class="px-6 py-1">
                       <div class="flex gap-3">
                         <button
                           type="button"
-                          @click="$router.push(`/user/${user.id}`)"
+                          @click="$router.push(`/customer/${customer.id}`)"
                           class="focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-red-300 font-medium p-2 rounded-lg text-sm me-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                         >
                           Lihat
                         </button>
                         <button
                           type="button"
-                          @click="alertDeleteUser(user.id)"
+                          @click="$router.push(`/customer/${customer.id}`)"
                           class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-red-300 font-medium p-2 rounded-lg text-sm me-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                         >
                           Edit
                         </button>
                         <button
                           type="button"
-                          @click="alertDeleteUser(user.id)"
+                          @click="alertDeleteCustomer(customer.id)"
                           class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium p-2 rounded-lg text-sm me-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                         >
                           Delete
@@ -129,7 +129,7 @@ export default {
 
   data() {
     return {
-      users: [],
+      customers: [],
       currentPage: 1,
       limit: 10,
       totalPages: 0,
@@ -137,7 +137,7 @@ export default {
     }
   },
   methods: {
-    fetchUsers() {
+    fetchCustomers() {
       const url = import.meta.env.VITE_API_URL_LOCAL
       this.loading = true
 
@@ -149,14 +149,14 @@ export default {
       token = token.replace(/['"]+/g, '')
 
       axios
-        .get(`${url}/users`, {
+        .get(`${url}/customers`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         })
         .then((res) => {
           console.log(res)
-          this.users = res.data.data.items
+          this.customers = res.data.data.items
           this.limit = res.data.data.size
           this.totalPages = res.data.data.total_page
           this.currentPage = res.data.data.page
@@ -169,7 +169,7 @@ export default {
         })
     },
 
-    deleteUser(userId) {
+    deleteCustomer(customerId) {
       const url = import.meta.env.VITE_API_URL_LOCAL
 
       let token = localStorage.getItem('token')
@@ -179,19 +179,19 @@ export default {
       }
       token = token.replace(/['"]+/g, '')
       axios
-        .delete(`${url}/users/${userId}`, {
+        .delete(`${url}/customers/${customerId}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         })
         .then(() => {
-          this.fetchUsers()
+          this.fetchCustomers()
         })
         .catch((err) => {
           console.log(err)
         })
     },
-    alertDeleteUser(userId) {
+    alertDeleteCustomer(customerId) {
       Swal.fire({
         title: `Are you sure want to <br> Delete this Account ?`,
         text: "You won't be able to revert this!",
@@ -202,10 +202,10 @@ export default {
         confirmButtonText: 'Yes, delete it!'
       }).then((result) => {
         if (result.isConfirmed) {
-          this.deleteUser(userId)
+          this.deleteCustomer(customerId)
           Swal.fire({
             title: 'Deleted!',
-            html: `Success Deleted <br> User with ID : ${userId}`,
+            html: `Success Deleted <br> Customer with ID : ${customerId}`,
             icon: 'success'
           })
         }
@@ -219,7 +219,7 @@ export default {
     }
   },
   mounted() {
-    this.fetchUsers()
+    this.fetchCustomers()
     this.$router = router
   }
 }

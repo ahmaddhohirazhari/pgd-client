@@ -13,9 +13,9 @@
               >
               <input
                 type="text"
-                name="Name"
-                id="Name"
-                :value="Name"
+                name="name"
+                id="name"
+                :value="name"
                 @input="checkInput"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                 required
@@ -23,7 +23,7 @@
             </div>
             <div>
               <label
-                for="productPrice"
+                for="email"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >Email</label
               >
@@ -102,17 +102,17 @@
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import router from '@/router'
+// import { format } from 'date-fns'
 
 export default {
   data() {
     return {
       body: {},
-      userID: '',
-      Name: '',
-      lastName: '',
+      id: '',
+      name: '',
       email: '',
       phone: '',
-      university: '',
+      address: '',
       loading: false,
       updateSuccess: false,
       isButtonDisabled: false
@@ -123,13 +123,24 @@ export default {
     fetchUser() {
       const url = import.meta.env.VITE_API_URL_LOCAL
 
+      let token = localStorage.getItem('token')
+      if (!token) {
+        console.error('Token tidak ditemukan di localStorage')
+        return
+      }
+      token = token.replace(/['"]+/g, '')
+
       axios
-        .get(`${url}/user/${this.$route.params.id}`)
+        .get(`${url}/users/${this.$route.params.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
         .then((res) => {
-          console.log(res.data.data)
-          this.userID = res.data.data[0].id
-          this.Name = res.data.data[0].username
-          this.email = res.data.data[0].email
+          console.log(res.data.data.id)
+          this.id = res.data.data.id
+          this.name = res.data.data.name
+          this.email = res.data.data.email
         })
         .catch((err) => {
           console.log(err)
@@ -138,17 +149,28 @@ export default {
 
     updateUser() {
       const body = {
-        Name: this.Name,
-        email: this.email,
+        name: this.name,
+        phone: this.phone
+        // address: this.address,
+        // birth_date: format(new Date(this.birth_date), "yyyy-MM-dd'T'00:00:00'Z'")
       }
 
       const url = import.meta.env.VITE_API_URL_LOCAL
 
+      let token = localStorage.getItem('token')
+      if (!token) {
+        console.error('Token tidak ditemukan di localStorage')
+        return
+      }
+      token = token.replace(/['"]+/g, '')
+      console.log(token)
+
       this.loading = true
       axios
-        .patch(`${url}/user/${this.$route.params.id}`, body, {
+        .patch(`${url}/users/${this.$route.params.id}`, body, {
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
           }
         })
         .then(() => {
@@ -156,7 +178,7 @@ export default {
           Swal.fire({
             position: 'center',
             icon: 'success',
-            title: `Success Update <br> Users with ID : ${this.userID}`,
+            title: `Success Update <br> Users with ID : ${this.id}`,
             showConfirmButton: false,
             timer: 2000
           })
@@ -170,11 +192,7 @@ export default {
         })
     },
     checkInput() {
-      this.isButtonDisabled =
-        this.productName.trim() === '' ||
-        this.productCategory.trim() === '' ||
-        this.productPrice.trim() === '' ||
-        this.productStock.trim() === ''
+      this.isButtonDisabled = this.name.trim() === '' || this.email.trim() === ''
     },
     toUserView() {
       router.push('/user')

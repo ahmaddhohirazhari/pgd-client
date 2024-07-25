@@ -8,15 +8,15 @@
           <form class="space-y-6" @submit.prevent="createUser()">
             <h5 class="text-xl font-medium text-gray-900 dark:text-white">Crete New User</h5>
             <div>
-              <label for="Name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >Name</label
               >
               <input
                 type="text"
-                name="username"
-                id="username"
-                v-model="username"
-                @change="handleuserName"
+                name="name"
+                id="name"
+                v-model="name"
+                @change="handleName"
                 @input="checkInput"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                 required
@@ -24,7 +24,7 @@
             </div>
             <div>
               <label
-                for="password"
+                for="email"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >Email</label
               >
@@ -33,12 +33,64 @@
                 name="email"
                 id="email"
                 v-model="email"
-                @change="handleemail"
+                @change="handleEmail"
                 @input="checkInput"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                 required
               />
             </div>
+            <div>
+              <label
+                for="phone"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >Phone</label
+              >
+              <input
+                type="phone"
+                name="phone"
+                id="phone"
+                v-model="phone"
+                @change="handlePhone"
+                @input="checkInput"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                required
+              />
+            </div>
+            <div>
+              <label
+                for="address"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >Address</label
+              >
+              <input
+                type="text"
+                name="address"
+                id="address"
+                v-model="address"
+                @change="handleAddress"
+                @input="checkInput"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                required
+              />
+            </div>
+            <div>
+              <label
+                for="birthDay"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >Birth Day</label
+              >
+              <input
+                type="date"
+                name="birth_date"
+                id="birth_date"
+                v-model="birth_date"
+                @change="handleBirthDate"
+                @input="checkInput"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                required
+              />
+            </div>
+
             <div>
               <label
                 for="password"
@@ -46,28 +98,11 @@
                 >Password</label
               >
               <input
-                type="text"
+                type="password"
                 name="password"
                 id="password"
-                v-model="phone"
-                @change="handlepassword"
-                @input="checkInput"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                required
-              />
-            </div>
-            <div>
-              <label
-                for="password"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Confirm Password</label
-              >
-              <input
-                type="text"
-                name="confirmPassword"
-                id="confirmPassword"
-                v-model="phone"
-                @change="handleconfirmPassword"
+                v-model="password"
+                @change="handlePassword"
                 @input="checkInput"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                 required
@@ -144,14 +179,17 @@
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import router from '@/router'
+import { format } from 'date-fns'
 
 export default {
   data() {
     return {
-      username: '',
+      name: '',
       email: '',
+      phone: '',
+      address: '',
+      birth_date: '',
       password: '',
-      confirmPassword: '',
       loading: false,
       updateSuccess: false
     }
@@ -160,19 +198,27 @@ export default {
   methods: {
     createUser() {
       const body = {
-        username: this.username,
+        name: this.name,
         email: this.email,
-        password: this.password,
-        confirmPassword: this.confirmPassword,
-        role: 'admin'
+        phone: this.phone,
+        address: this.address,
+        birth_date: format(new Date(this.birth_date), "yyyy-MM-dd'T'00:00:00'Z'"),
+        password: this.password
       }
       this.loading = true
       const url = import.meta.env.VITE_API_URL_LOCAL
+      let token = localStorage.getItem('token')
+      if (!token) {
+        console.error('Token tidak ditemukan di localStorage')
+        return
+      }
+      token = token.replace(/['"]+/g, '')
 
       axios
-        .post(`${url}/user`, body, {
+        .post(`${url}/users`, body, {
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
           }
         })
         .then((res) => {
@@ -195,15 +241,24 @@ export default {
         })
     },
     handleuserName(event) {
-      this.username = event.target.value
+      this.name = event.target.value
     },
-    handlepassword(event) {
+    handleuserPhone(event) {
+      this.phone = event.target.value
+    },
+
+    handleuserAddress(event) {
+      this.address = event.target.value
+    },
+    handleuserBirthDate(event) {
+      this.birth_date = event.target.value
+    },
+
+    handlePassword(event) {
       this.password = event.target.value
     },
-    handleconfirmPassword(event) {
-      this.confirmPassword = event.target.value
-    },
-    handleemail(event) {
+
+    handleEmail(event) {
       this.email = event.target.value
     },
     checkInput() {},
@@ -213,12 +268,7 @@ export default {
   },
   computed: {
     isButtonDisabled() {
-      return !(
-        this.username.length > 0 &&
-        this.email.length > 0 &&
-        this.password.length > 0 &&
-        this.confirmPassword.length > 0
-      )
+      return !(this.name.length > 0 && this.email.length > 0 && this.password.length > 0)
     }
   },
   mounted() {

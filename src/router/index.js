@@ -3,11 +3,10 @@ import HomeView from '../views/HomeView.vue'
 import UserView from '../views/UserView.vue'
 import UserDetailView from '../views/UserDetailView.vue'
 import CreateUserView from '../views/CreateUserView.vue'
-import ModemView from '../views/ModemView.vue'
-import ResultView from '../views/ResultView.vue'
-import ProductDetailView from '../views/ProductDetailView.vue'
-import CreateProductView from '../views/CreateProductView.vue'
-import InboxView from '../views/InboxView.vue'
+
+import CustomerView from '@/views/CustomerView.vue'
+import CreateCustomerView from '@/views/CreateCustomerView.vue'
+import CustomerDetailView from '@/views/CustomerDetailView.vue'
 
 import LoginView from '../views/LoginView.vue'
 import NotFoundView from '../components/NotFoundView.vue'
@@ -20,11 +19,6 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView
-    },
-    {
-      path: '/inbox',
-      name: 'inbox',
-      component: InboxView
     },
     {
       path: '/login',
@@ -47,30 +41,20 @@ const router = createRouter({
       component: CreateUserView
     },
     {
-      path: '/modem',
-      name: 'modem',
-      component: ModemView
+      path: '/customer',
+      name: 'customer',
+      component: CustomerView
     },
     {
-      path: '/product/:id',
-      name: 'productDetail',
-      component: ProductDetailView
+      path: '/customer/:id',
+      name: 'customerDetail',
+      component: CustomerDetailView
     },
     {
-      path: '/product/create',
-      name: 'createProduct',
-      component: CreateProductView
+      path: '/customer/create',
+      name: 'createCustomer',
+      component: CreateCustomerView
     },
-    {
-      path: '/result',
-      name: 'result',
-      component: ResultView
-    },
-    // {
-    //   path: '/test',
-    //   name: 'test',
-    //   component: TestView
-    // },
     {
       path: '/:catchAll(.*)', // Semua path yang tidak cocok akan ditangani di sini
       name: 'notFound',
