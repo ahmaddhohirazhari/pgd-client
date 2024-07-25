@@ -26,7 +26,7 @@
             </svg>
           </button>
           <router-link to="/" class="flex ms-2 md:me-24">
-            <!-- <svg
+            <svg
               width="202"
               height="32"
               viewBox="0 0 202 32"
@@ -177,7 +177,7 @@
                 d="M61.3015 19.3253C58.9348 19.3253 56.655 19.3253 54.2969 19.3253C55.4587 16.6421 56.5981 14.01 57.7949 11.2461C58.983 13.9842 60.1262 16.6182 61.3015 19.3253Z"
                 fill="#0AA94E"
               />
-            </svg> -->
+            </svg>
           </router-link>
         </div>
         <div class="flex items-center">
